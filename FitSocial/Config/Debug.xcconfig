@@ -1,0 +1,17 @@
+//
+//  Debug.xcconfig
+//  FitSocial
+//
+//  Created by Dragan Kos on 12. 8. 2025..
+//
+
+// Scheme
+SCHEME = http
+
+// Host i port tvog backend-a
+HOST   = 192.168.100.31
+PORT   = 8080
+
+// Base URL (završava sa / da kasnije lako dodaješ putanje)
+BASE_URL = $(SCHEME):/$()/$(HOST):$(PORT)/
+

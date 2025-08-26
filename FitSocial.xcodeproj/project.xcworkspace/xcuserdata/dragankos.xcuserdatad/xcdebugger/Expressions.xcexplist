@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "closure #1 in closure #1 in FitSocialView.body.getter:FitSocialView.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FeedViewModel.loadFirstPage():FeedViewModel.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PostApiServiceImpl._getAll(page:size:sort:extraQuery:requiresAuth:):PostApiService.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PostRepositoryImpl.getAll(page:size:):PostRepository.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FeedAsyncImage.body.getter:PostCardImagesOnly.swift">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

@@ -1,0 +1,631 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D80BC9C92E5CF009007D5BC8 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = D80BC9C82E5CF009007D5BC8 /* Atlantis */; };
+		D8DD858C2E530D0B003BAA6F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D8DD858B2E530D0B003BAA6F /* Kingfisher */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D8B111BB2E4B2640009F6748 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8B111A32E4B263E009F6748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8B111AA2E4B263E009F6748;
+			remoteInfo = FitSocial;
+		};
+		D8B111C52E4B2640009F6748 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8B111A32E4B263E009F6748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8B111AA2E4B263E009F6748;
+			remoteInfo = FitSocial;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D8B111AB2E4B263E009F6748 /* FitSocial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitSocial.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8B111BA2E4B2640009F6748 /* FitSocialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8B111C42E4B2640009F6748 /* FitSocialUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D8B111FF2E4B76E9009F6748 /* Exceptions for "FitSocial" folder in "FitSocial" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8B111AA2E4B263E009F6748 /* FitSocial */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D8B111AD2E4B263E009F6748 /* FitSocial */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D8B111FF2E4B76E9009F6748 /* Exceptions for "FitSocial" folder in "FitSocial" target */,
+			);
+			path = FitSocial;
+			sourceTree = "<group>";
+		};
+		D8B111BD2E4B2640009F6748 /* FitSocialTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FitSocialTests;
+			sourceTree = "<group>";
+		};
+		D8B111C72E4B2640009F6748 /* FitSocialUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FitSocialUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D8B111A82E4B263E009F6748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D80BC9C92E5CF009007D5BC8 /* Atlantis in Frameworks */,
+				D8DD858C2E530D0B003BAA6F /* Kingfisher in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111B72E4B2640009F6748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111C12E4B2640009F6748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D8B111A22E4B263E009F6748 = {
+			isa = PBXGroup;
+			children = (
+				D8B111AD2E4B263E009F6748 /* FitSocial */,
+				D8B111BD2E4B2640009F6748 /* FitSocialTests */,
+				D8B111C72E4B2640009F6748 /* FitSocialUITests */,
+				D8B111AC2E4B263E009F6748 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D8B111AC2E4B263E009F6748 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D8B111AB2E4B263E009F6748 /* FitSocial.app */,
+				D8B111BA2E4B2640009F6748 /* FitSocialTests.xctest */,
+				D8B111C42E4B2640009F6748 /* FitSocialUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D8B111AA2E4B263E009F6748 /* FitSocial */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B111CE2E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocial" */;
+			buildPhases = (
+				D8B111A72E4B263E009F6748 /* Sources */,
+				D8B111A82E4B263E009F6748 /* Frameworks */,
+				D8B111A92E4B263E009F6748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D8B111AD2E4B263E009F6748 /* FitSocial */,
+			);
+			name = FitSocial;
+			packageProductDependencies = (
+				D8DD858B2E530D0B003BAA6F /* Kingfisher */,
+				D80BC9C82E5CF009007D5BC8 /* Atlantis */,
+			);
+			productName = FitSocial;
+			productReference = D8B111AB2E4B263E009F6748 /* FitSocial.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D8B111B92E4B2640009F6748 /* FitSocialTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B111D12E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocialTests" */;
+			buildPhases = (
+				D8B111B62E4B2640009F6748 /* Sources */,
+				D8B111B72E4B2640009F6748 /* Frameworks */,
+				D8B111B82E4B2640009F6748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8B111BC2E4B2640009F6748 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D8B111BD2E4B2640009F6748 /* FitSocialTests */,
+			);
+			name = FitSocialTests;
+			packageProductDependencies = (
+			);
+			productName = FitSocialTests;
+			productReference = D8B111BA2E4B2640009F6748 /* FitSocialTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D8B111C32E4B2640009F6748 /* FitSocialUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B111D42E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocialUITests" */;
+			buildPhases = (
+				D8B111C02E4B2640009F6748 /* Sources */,
+				D8B111C12E4B2640009F6748 /* Frameworks */,
+				D8B111C22E4B2640009F6748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8B111C62E4B2640009F6748 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D8B111C72E4B2640009F6748 /* FitSocialUITests */,
+			);
+			name = FitSocialUITests;
+			packageProductDependencies = (
+			);
+			productName = FitSocialUITests;
+			productReference = D8B111C42E4B2640009F6748 /* FitSocialUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D8B111A32E4B263E009F6748 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					D8B111AA2E4B263E009F6748 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					D8B111B92E4B2640009F6748 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = D8B111AA2E4B263E009F6748;
+					};
+					D8B111C32E4B2640009F6748 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = D8B111AA2E4B263E009F6748;
+					};
+				};
+			};
+			buildConfigurationList = D8B111A62E4B263E009F6748 /* Build configuration list for PBXProject "FitSocial" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D8B111A22E4B263E009F6748;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D8DD858A2E530D0B003BAA6F /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				D80BC9022E5CEC12007D5BC8 /* XCRemoteSwiftPackageReference "atlantis" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D8B111AC2E4B263E009F6748 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8B111AA2E4B263E009F6748 /* FitSocial */,
+				D8B111B92E4B2640009F6748 /* FitSocialTests */,
+				D8B111C32E4B2640009F6748 /* FitSocialUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D8B111A92E4B263E009F6748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111B82E4B2640009F6748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111C22E4B2640009F6748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D8B111A72E4B263E009F6748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111B62E4B2640009F6748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B111C02E4B2640009F6748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D8B111BC2E4B2640009F6748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8B111AA2E4B263E009F6748 /* FitSocial */;
+			targetProxy = D8B111BB2E4B2640009F6748 /* PBXContainerItemProxy */;
+		};
+		D8B111C62E4B2640009F6748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8B111AA2E4B263E009F6748 /* FitSocial */;
+			targetProxy = D8B111C52E4B2640009F6748 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D8B111CC2E4B2640009F6748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D8B111CD2E4B2640009F6748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D8B111CF2E4B2640009F6748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D8B111AD2E4B263E009F6748 /* FitSocial */;
+			baseConfigurationReferenceRelativePath = Config/Debug.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FitSocial/Info.plist;
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Aplikaciji je potrebna kamera za fotografije i video.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka u videu.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocial;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D8B111D02E4B2640009F6748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D8B111AD2E4B263E009F6748 /* FitSocial */;
+			baseConfigurationReferenceRelativePath = Config/Release.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FitSocial/Info.plist;
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Aplikaciji je potrebna kamera za fotografije i video.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka u videu.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocial;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D8B111D22E4B2640009F6748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocialTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitSocial.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitSocial";
+			};
+			name = Debug;
+		};
+		D8B111D32E4B2640009F6748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocialTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitSocial.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitSocial";
+			};
+			name = Release;
+		};
+		D8B111D52E4B2640009F6748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocialUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FitSocial;
+			};
+			name = Debug;
+		};
+		D8B111D62E4B2640009F6748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.unibl.etf.FitSocialUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FitSocial;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8B111A62E4B263E009F6748 /* Build configuration list for PBXProject "FitSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B111CC2E4B2640009F6748 /* Debug */,
+				D8B111CD2E4B2640009F6748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8B111CE2E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B111CF2E4B2640009F6748 /* Debug */,
+				D8B111D02E4B2640009F6748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8B111D12E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocialTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B111D22E4B2640009F6748 /* Debug */,
+				D8B111D32E4B2640009F6748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8B111D42E4B2640009F6748 /* Build configuration list for PBXNativeTarget "FitSocialUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B111D52E4B2640009F6748 /* Debug */,
+				D8B111D62E4B2640009F6748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D80BC9022E5CEC12007D5BC8 /* XCRemoteSwiftPackageReference "atlantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ProxymanApp/atlantis";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.29.2;
+			};
+		};
+		D8DD858A2E530D0B003BAA6F /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D80BC9C82E5CF009007D5BC8 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D80BC9022E5CEC12007D5BC8 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
+		};
+		D8DD858B2E530D0B003BAA6F /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8DD858A2E530D0B003BAA6F /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D8B111A32E4B263E009F6748 /* Project object */;
+}

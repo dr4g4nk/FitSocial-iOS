@@ -1,0 +1,24 @@
+{
+  "originHash" : "d5e02c7a5d62cecce5ba33401eb003c7f73b8b85d49d38c7b5478df9b41a43b0",
+  "pins" : [
+    {
+      "identity" : "atlantis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ProxymanApp/atlantis",
+      "state" : {
+        "revision" : "16808ff5535c607feb16eddc815201da80fb973e",
+        "version" : "1.29.2"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "2015fda791daa72c8058619545a593bf8c1dd59f",
+        "version" : "8.5.0"
+      }
+    }
+  ],
+  "version" : 3
+}
