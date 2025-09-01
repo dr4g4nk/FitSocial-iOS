@@ -20,6 +20,10 @@ public struct User: Identifiable, Codable, Hashable, Copyable {
         self.avatarUrl = avatarUrl
     }
     
+    public var displayName: String {
+        "\(firstName) \(lastName)"
+    }
+    
     public func avatarUrl(privateAccess: Bool = true) -> String {
         if privateAccess {
             return "\(AppConfig.baseURL)api/user/\(id)/avatar"

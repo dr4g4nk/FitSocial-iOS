@@ -1,25 +1,25 @@
 //
-//  ChatRepository.swift
+//  UserRepository.swift
 //  FitSocial
 //
-//  Created by Dragan Kos on 26. 8. 2025..
+//  Created by Dragan Kos on 30. 8. 2025.
 //
 
 import Foundation
 
-public protocol ChatRepository: Repository<Int, Chat, Chat, Chat> where Service : ChatApiService {
+public protocol UserRepository: Repository<Int, User, User, User> where Service : UserApiService {
 
     func getAllFiltered(page: Int?, size: Int?, sort: String?, filterValue: String?) async throws -> Page<Entity>
 }
 
-class ChatRepositoryImpl<Service: ChatApiService> : ChatRepository {
+class UserRepositoryImpl<Service: UserApiService> : UserRepository {
     var apiService: Service
     
     init(apiService: Service) {
         self.apiService = apiService
     }
     
-    func getAllFiltered(page: Int?, size: Int?, sort: String?, filterValue: String?) async throws -> Page<Chat> {
+    func getAllFiltered(page: Int?, size: Int?, sort: String?, filterValue: String?) async throws -> Page<User> {
         return try await apiService.getAllFiltered(page: page, size: size, sort: sort, filterValue: filterValue).result
     }
     
