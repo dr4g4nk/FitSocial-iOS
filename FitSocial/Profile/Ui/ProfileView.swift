@@ -51,11 +51,12 @@ struct ProfileView: View {
 
                                 },
                                 onViewProfile: { user in },
-                                onOpenMenu: {post in
+                                onOpenMenu: { post in
                                     if auth.isLoggedIn {
                                         vm.selectedPost = post
                                         vm.showActionMenu = true
-                                    }},
+                                    }
+                                },
                                 onPlay: { id in vm.userTappedPlay(id: id) },
                                 onPause: { id in vm.userTappedPause() },
                                 onToggleMute: { id, mute in
@@ -73,21 +74,29 @@ struct ProfileView: View {
                             ).confirmationDialog(
                                 "Akcije",
                                 isPresented: $vm.showActionMenu,
-                                titleVisibility: .automatic
+                                titleVisibility: .automatic,
                             ) {
-                                if vm.selectedPost?.author.id == auth.user?.id {
-                                    Button("Izmijeni objavu", systemImage: "pencil")
-                                    { onEditPost(vm.selectedPost!)  }
-                                    Button(
-                                        "Obriši objavu",
-                                        systemImage: "trash",
-                                        role: .destructive
-                                    ) { vm.deletePost(postId: vm.selectedPost?.id ?? -1)  }
+                                PostActionsSheet(
+                                    isOwner: vm.selectedPost?.author.id
+                                        == auth.user?.id
+                                ) {
+                                    onEditPost(vm.selectedPost!)
+                                } onDelete: {
+                                    vm.showDeleteAlert = true
+                                } onReport: {
                                 }
-                                Button(
-                                    "Prijavi objavu",
-                                    systemImage: "exclamationmark.bubble"
-                                ) { /* ... */  }
+                            }.alert(
+                                "Obrisati ovu objavu?",
+                                isPresented: $vm.showDeleteAlert
+                            ) {
+                                Button("Obriši", role: .destructive) {
+                                    vm.deletePost(
+                                        postId: vm.selectedPost?.id ?? -1
+                                    )
+                                }
+                                Button("Odustani", role: .cancel) {}
+                            } message: {
+                                Text("Ova radnja se ne može poništiti.")
                             }
                         }
                         if vm.isLoading {

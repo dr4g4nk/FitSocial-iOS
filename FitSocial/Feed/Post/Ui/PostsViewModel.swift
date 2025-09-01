@@ -20,6 +20,7 @@ public class PostsViewModel {
     var errorMessage: String?
     var showComments: Bool = false
     var showActionMenu: Bool = false
+    var showDeleteAlert = false
     var selectedPost: Post? = nil
 
     // paginacija
@@ -30,11 +31,7 @@ public class PostsViewModel {
         self.repo = repo
     }
 
-    enum Action: Equatable {
-        case refresh
-        case loadMore
-    }
-
+    
     private var lastFailedAction: Action?
 
     func getPosts(page: Int, size: Int) async throws -> Page<Post> {

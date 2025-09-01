@@ -83,4 +83,8 @@ final class FitSocialContainer {
             modelContext: ModelContext(modelContainer)
         )
     }
+    
+    func makeConversationContainer() -> ConversationContainer {
+        ConversationContainer(apiClient: self.apiClient, session: self.session)
+    }
 }

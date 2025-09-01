@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-/// Donja lista akcija za objavu (sheet)
 struct PostActionsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -23,8 +22,8 @@ struct PostActionsSheet: View {
                 .padding(.top, 8)
             VStack(spacing: 8) {
                 if isOwner {
-                    ActionRow(
-                        title: "Izmijeni objavu",
+                    Button(
+                        "Izmijeni objavu",
                         systemImage: "pencil",
                         action: {
                             onEdit()
@@ -32,9 +31,10 @@ struct PostActionsSheet: View {
                         }
                     )
 
-                    ActionRow(
-                        title: "Obriši objavu",
+                    Button(
+                        "Obriši objavu",
                         systemImage: "trash",
+                        role: .destructive,
                         action: {
                             onDelete()
                             dismiss()
@@ -42,8 +42,8 @@ struct PostActionsSheet: View {
                     )
                 }
 
-                ActionRow(
-                    title: "Prijavi objavu",
+                Button(
+                    "Prijavi objavu",
                     systemImage: "exclamationmark.bubble",
                     action: {
                         onReport()
@@ -55,7 +55,7 @@ struct PostActionsSheet: View {
 
             Spacer(minLength: 0)
 
-            Button("Zatvori") {
+            Button("Zatvori", role: .cancel) {
                 dismiss()
             }
             .font(.body.weight(.semibold))
@@ -66,31 +66,8 @@ struct PostActionsSheet: View {
             .padding(.bottom, 12)
         }
         .padding(.horizontal, 16)
-        .presentationDetents([.fraction(0.35), .medium]) // iOS 16+
+        .presentationDetents([.fraction(0.35), .medium])  // iOS 16+
         .presentationDragIndicator(.hidden)
-    }
-}
-
-/// Jedan red sa akcijom (ikonica + naslov), podržava destructive stil
-private struct ActionRow: View {
-    let title: String
-    let systemImage: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: systemImage)
-                    .imageScale(.large)
-                Text(title)
-                    .font(.body)
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .padding(12)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(title))
+        
     }
 }

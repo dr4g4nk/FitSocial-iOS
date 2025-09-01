@@ -19,20 +19,17 @@ struct PostTextSection: View {
                 .font(.headline)
                 .accessibilityHidden(true)
 
-            TextEditor(text: $text)
+            TextField("Podijelite što vam je na umu…", text: $text, axis: .vertical)
                 .focused($focused)
-                .frame(minHeight: 120)
-                .padding(12)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                .overlay(alignment: .topLeading) {
-                    if text.isEmpty {
-                        Text("Podijelite što vam je na umu…")
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 14)
-                            .allowsHitTesting(false)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Zatvori tastaturu") { focused = false }
                     }
                 }
+                .lineLimit(8)
+                .padding(12)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
                 .accessibilityLabel("Tekst objave")
 
             HStack {

@@ -13,22 +13,9 @@ struct MediaPickerBar: View {
     var onPick: ([PhotosPickerItem]) -> Void
     var onShowCamera: ()->Void
 
-    @State private var pickerItems: [PhotosPickerItem] = []
-
     var body: some View {
         HStack {
-            PhotosPicker(
-                selection: $pickerItems,
-                maxSelectionCount: remainingSlots,
-                matching: .any(of: [.images, .videos])
-            ) {
-                Label("Biblioteka", systemImage: "photo")
-            }
-            .onChange(of: pickerItems) { _, newValue in
-                if !newValue.isEmpty { onPick(newValue) }
-                pickerItems.removeAll()
-            }
-            
+            MediaPicker(title: "Odaberi fotografije", systemImage: "photo", maxSelectionCount: remainingSlots, onPick: onPick)
             Spacer()
             Button {
                 onShowCamera()

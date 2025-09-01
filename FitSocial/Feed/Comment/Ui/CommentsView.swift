@@ -10,18 +10,20 @@ import SwiftUI
 struct CommentsView: View {
     @Bindable private var vm: CommentsViewModel
     @State private var draft = ""
-    
+
     @Environment(AuthManager.self) private var auth: AuthManager
+    @FocusState private var isInputFocused: Bool
 
     init(vm: CommentsViewModel) {
         self.vm = vm
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
+        VStack {
             HStack {
-                Capsule().frame(width: 36, height: 4).foregroundStyle(.secondary)
+                Capsule().frame(width: 36, height: 4).foregroundStyle(
+                    .secondary
+                )
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 8)
@@ -33,7 +35,6 @@ struct CommentsView: View {
 
             Divider()
 
-            // Lista komentara
             List {
                 ForEach(vm.comments) { c in
                     CommentRow(comment: c)
@@ -44,7 +45,13 @@ struct CommentsView: View {
                 if vm.isLoading && vm.comments.isEmpty {
                     Section { ProgressView().frame(maxWidth: .infinity) }
                 } else if vm.isLoading {
-                    Section { HStack { Spacer(); ProgressView(); Spacer() } }
+                    Section {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    }
                 }
             }
             .listStyle(.plain)
@@ -52,10 +59,15 @@ struct CommentsView: View {
                 await vm.refresh()
             }
 
-            if(auth.isLoggedIn){
-                // Input
-                CommentInputBar(text: $draft, isSending: vm.isSending) {
-                    let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+            if auth.isLoggedIn {
+                CommentInputBar(
+                    text: $draft,
+                    isSending: vm.isSending,
+                    isFocused: $isInputFocused
+                ) {
+                    let text = draft.trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    )
                     guard !text.isEmpty else { return }
                     Task {
                         try? await vm.send(text: text)
@@ -63,19 +75,21 @@ struct CommentsView: View {
                     }
                 }
             }
-           /* .keyboardToolbarSend { // vidi ekstenziju ispod
-                let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard !text.isEmpty else { return }
-                Task {
-                    try? await vm.send(text: text)
-                    draft = ""
-                }
-            }*/
         }
         .task {
             if vm.comments.isEmpty { await vm.refresh() }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .safeAreaInset(edge: .bottom) {
+            if isInputFocused {
+                HStack {
+                    Spacer()
+                    Button("Zatvori tastaturu") { isInputFocused = false }                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                .background(.thinMaterial) // ili .ultraThinMaterial
+            }
+        }
     }
 }

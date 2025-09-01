@@ -60,8 +60,8 @@ private struct PostMediaCard: View {
                     .fill(Color.secondary.opacity(0.08))
 
                 switch media.kind {
-                case .image(let data):
-                    if let image = UIImage(data: data) {
+                case .image(let data, _):
+                    if let image = data {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()
@@ -86,6 +86,7 @@ private struct PostMediaCard: View {
                                 Image(systemName: "play.circle.fill")
                                     .font(.system(size: 44))
                                     .shadow(radius: 4)
+                                    .foregroundStyle(.white)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     } else {
@@ -105,6 +106,12 @@ private struct PostMediaCard: View {
                         minHeight: 160,
                         maxHeight: 380
                     )
+                    .overlay(alignment: .center) {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 44))
+                            .shadow(radius: 4)
+                            .foregroundStyle(.white)
+                    }
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
             }

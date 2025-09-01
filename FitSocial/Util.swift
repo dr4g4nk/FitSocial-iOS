@@ -22,3 +22,9 @@ public func mimeType(for url: URL) -> String? {
         return mime
     }
     return nil    }
+
+
+public enum Action: Equatable {
+    case refresh
+    case loadMore
+}

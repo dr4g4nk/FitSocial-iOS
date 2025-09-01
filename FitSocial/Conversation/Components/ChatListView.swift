@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+/*
 struct ChatListView: View {
     let chats: [Chat]
     var onOpen: (Chat) -> Void = { _ in }
@@ -176,3 +176,4 @@ struct GroupAvatarView: View {
         .clipped()
     }
 }
+*/

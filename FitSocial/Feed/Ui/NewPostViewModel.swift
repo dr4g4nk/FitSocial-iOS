@@ -96,28 +96,28 @@ final class NewPostViewModel {
         guard !items.isEmpty else { return }
         Task {
             for item in items.prefix(maxAttachments - postMedia.count) {
-                if let data = try? await item.loadTransferable(type: Data.self)
-                {
-                    postMedia.append(.init(kind: .image(data), mimeType: await mimeType(for: item)))
-                    continue
-                }
-                if let url = try? await item.loadTransferable(type: URL.self) {
-                    let thumb = await VideoThumbnailer.makeThumbnail(url: url)
+                if let video = try? await item.loadTransferable(type: PickedVideo.self) {
+                    let thumb = await Thumbnailer.makeVideoThumbnail(url: video.url)
                     postMedia.append(
-                        .init(kind: .video(url, thumbnail: thumb), mimeType: mimeType(for: url))
+                        .init(filename: video.filename, kind: .video(video.url, thumbnail: thumb), mimeType: video.mimeType)
                     )
                 }
+                else if let img = try? await item.loadTransferable(type: PickedImage.self)
+                {
+                    postMedia.append(.init(filename: img.filename, kind: .image(Thumbnailer.downsampleImage(at: img.url), url: img.url), mimeType: img.mimeType))
+                }
+                
             }
         }
     }
 
     func appendCameraPhoto(_ data: Data, mimeType:String?) {
-        postMedia.append(.init(kind: .image(data), mimeType: mimeType))
+        //postMedia.append(.init(kind: .image(data), mimeType: mimeType))
     }
 
     func appendCameraVideo(_ url: URL) {
         Task {
-            let thumb = await VideoThumbnailer.makeThumbnail(url: url)
+            let thumb = await Thumbnailer.makeVideoThumbnail(url: url)
             postMedia.append(.init(kind: .video(url, thumbnail: thumb), mimeType: mimeType(for: url)))
         }
     }

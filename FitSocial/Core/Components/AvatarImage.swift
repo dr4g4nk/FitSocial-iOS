@@ -24,18 +24,4 @@ public struct AvatarImage: View {
         .frame(width: width, height: height)
         .clipShape(Circle())
     }
-
-    @ViewBuilder
-    private func imageBody(for phase: AsyncImagePhase) -> some View {
-        switch phase {
-        case .success(let img):
-            img.resizable().scaledToFill()
-        case .empty:
-            ProgressView()
-        case .failure:
-            Color.gray.opacity(0.2)
-        @unknown default:
-            Color.gray.opacity(0.2)
-        }
-    }
 }

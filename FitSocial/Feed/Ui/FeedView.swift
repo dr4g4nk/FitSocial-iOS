@@ -66,21 +66,29 @@ struct FeedView: View {
                         ).confirmationDialog(
                             "Akcije",
                             isPresented: $vm.showActionMenu,
-                            titleVisibility: .automatic
+                            titleVisibility: .automatic,
                         ) {
-                            if vm.selectedPost?.author.id == auth.user?.id {
-                                Button("Izmijeni objavu", systemImage: "pencil")
-                                { onEditPost(vm.selectedPost!)  }
-                                Button(
-                                    "Obriši objavu",
-                                    systemImage: "trash",
-                                    role: .destructive
-                                ) { vm.deletePost(postId: vm.selectedPost?.id ?? -1)  }
+                            PostActionsSheet(
+                                isOwner: vm.selectedPost?.author.id
+                                    == auth.user?.id
+                            ) {
+                                onEditPost(vm.selectedPost!)
+                            } onDelete: {
+                                vm.showDeleteAlert = true
+                            } onReport: {
                             }
-                            Button(
-                                "Prijavi objavu",
-                                systemImage: "exclamationmark.bubble"
-                            ) { /* ... */  }
+                        }.alert(
+                            "Obrisati ovu objavu?",
+                            isPresented: $vm.showDeleteAlert
+                        ) {
+                            Button("Obriši", role: .destructive) {
+                                vm.deletePost(
+                                    postId: vm.selectedPost?.id ?? -1
+                                )
+                            }
+                            Button("Odustani", role: .cancel) {}
+                        } message: {
+                            Text("Ova radnja se ne može poništiti.")
                         }
                     }
                     if vm.isLoading {
@@ -91,13 +99,11 @@ struct FeedView: View {
                         }
                     } else {
                         if !vm.reachedEnd {
-                            Color.clear
-                                .frame(height: 1)
-                                .task {
-                                    vm.loadNextPageIfNeeded(
-                                        currentItemId: vm.posts.last?.id
-                                    )
-                                }
+                            PagingTrigger(onVisible: {
+                                vm.loadNextPageIfNeeded(
+                                    currentItemId: vm.posts.last?.id
+                                )
+                            })
                         }
                     }
                 }
@@ -109,15 +115,7 @@ struct FeedView: View {
             .refreshable { vm.refresh() }
             .overlay(alignment: .bottom) {
                 if vm.errorMessage != nil && !vm.isLoading {
-                    VStack(spacing: 12) {
-                        Text("Došlo je do greške")
-                            .font(.body)
-                            .padding(.vertical, 6)
-                        Button("Pokušaj ponovo") { Task { vm.retry() } }
-                            .buttonStyle(.borderedProminent)
-                    }
-                    .padding()
-                    .background(.background.opacity(0.8))
+                    IOErrorOverlayView(onRetry: { vm.retry() })
                 }
             }
         }

@@ -6,19 +6,20 @@
 //
 
 import Foundation
+import SwiftUI
 
-public struct Message: Identifiable, Codable, Copyable{
+public struct Message: Identifiable, Codable, Copyable, Hashable{
     public let id: Int
     public let chatId: Int
     public let user: User
     public let content: String
-    public let label: String
+    public let label: String?
     public let createdAt: Date
     public let updatedAt: Date
     public let my: Bool
     public let attachment: Attachment?
     
-    init(id: Int, chatId: Int, user: User, content: String, label: String, createdAt: Date, updatedAt: Date, my: Bool, attachment: Attachment? = nil) {
+    init(id: Int, chatId: Int, user: User, content: String, label: String?, createdAt: Date, updatedAt: Date, my: Bool, attachment: Attachment? = nil) {
         self.id = id
         self.chatId = chatId
         self.user = user
@@ -58,7 +59,7 @@ public struct MessageDto:Identifiable, Codable, Copyable{
     }
 }
 
-public struct Attachment:Identifiable, Codable, Copyable{
+public struct Attachment:Identifiable, Codable, Copyable, Hashable{
     public let id: Int
     public let fileName: String
     public let contentType: String
@@ -76,4 +77,35 @@ public struct Attachment:Identifiable, Codable, Copyable{
     public var isImage: Bool {
         contentType.starts(with: "image")
     }
+    
+    public func getImageUrlString() -> String {
+        let path: String = "api/attachment/\(id)/stream\(isVideo ? "?thumbnail=true" : "")"
+        return "\(AppConfig.baseURL)\(path)"
+    }
+    
+    public func getUrlString() -> String {
+        let path: String = "api/attachment/\(id)/stream"
+        return "\(AppConfig.baseURL)\(path)"
+    }
+}
+
+public enum AttachmentKind: Hashable {
+    case image(UIImage?, url: URL)
+    case video(URL, thumbnail: UIImage?)
+    case document(URL)
+    case remoteImage(
+        id: Int,
+        url: URL,
+    )
+    case remoteVideo(
+        id: Int,
+        url: URL,
+        thumbnailURL: URL?,
+    )
+}
+
+public struct AttachmentDto: Hashable{
+    public let filename: String
+    public let contentType: String?
+    public let kind: AttachmentKind
 }

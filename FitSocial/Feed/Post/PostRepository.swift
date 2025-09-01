@@ -87,15 +87,15 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
                     return UploadFile(
                         name: "mediaFiles",
                         fileURL: url,
-                        filename: m.id.uuidString,
+                        filename: m.filename,
                         mimeType: m.mimeType!
                     )
-                case .image(let data):
+                case .image(_, let url):
                     return UploadFile(
                         name: "mediaFiles",
-                        filename: m.id.uuidString,
+                        fileURL: url,
+                        filename: m.filename,
                         mimeType: m.mimeType!,
-                        data: data
                     )
                 default: return nil
                 }
@@ -123,15 +123,15 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
                     return UploadFile(
                         name: "mediaFiles",
                         fileURL: url,
-                        filename: m.id.uuidString,
+                        filename: m.filename,
                         mimeType: m.mimeType!
                     )
-                case .image(let data):
+                case .image(_, let url):
                     return UploadFile(
                         name: "mediaFiles",
-                        filename: m.id.uuidString,
+                        fileURL: url,
+                        filename: m.filename,
                         mimeType: m.mimeType!,
-                        data: data
                     )
                 default: return nil
                 }

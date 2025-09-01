@@ -38,6 +38,7 @@ struct FitSocialView: View {
 
     @State private var feedContainer: FeedContainer
     @State private var profileContainer: ProfileContainer
+    @State private var conversationContainer: ConversationContainer
 
     @State private var previous: NavTab? = nil
     @State private var selected: NavTab = .feed
@@ -47,7 +48,6 @@ struct FitSocialView: View {
     // per-tab back stacks
     @State private var feedPath = NavigationPath()
     @State private var activityPath = NavigationPath()
-    @State private var messagesPath = NavigationPath()
     @State private var profilePath = NavigationPath()
 
     @State private var loginPath = NavigationPath()
@@ -70,6 +70,8 @@ struct FitSocialView: View {
         let feedContainer = container.makeFeedContainer()
         self.feedContainer = feedContainer
         self.profileContainer = container.makeProfileContainer()
+
+        self.conversationContainer = container.makeConversationContainer()
 
         self.loginViewModel = LoginViewModel(authRepo: container.authRepo)
         self.registrationViewModel = RegistrationViewModel(
@@ -188,36 +190,35 @@ struct FitSocialView: View {
             }
             .tag(NavTab.add)
 
-            // MESSAGES (protected)
-            NavigationStack(path: $messagesPath) {
-                /* MessagesView(vm: container.makeMessagesVM())
-                     .navigationTitle("Poruke")*/
-            }
-            .tabItem {
-                Label(
-                    NavTab.messages.title,
-                    systemImage: NavTab.messages.systemImage
-                )
-            }
-            .tag(NavTab.messages)
+            ConversationScreen(conversationContainer: conversationContainer)
+                .tabItem {
+                    Label(
+                        NavTab.messages.title,
+                        systemImage: NavTab.messages.systemImage
+                    )
+                }
+                .tag(NavTab.messages)
 
             NavigationStack(path: $profilePath) {
-                ProfileScreen(container: profileContainer, onEditPost: { post in
-                    selectedPost = post
-                })
-                    .navigationTitle("Profil")
-                    .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button {
-                                onLogout()
-                            } label: {
-                                Image(
-                                    systemName:
-                                        "rectangle.portrait.and.arrow.right"
-                                )
-                            }
+                ProfileScreen(
+                    container: profileContainer,
+                    onEditPost: { post in
+                        selectedPost = post
+                    }
+                )
+                .navigationTitle("Profil")
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        Button {
+                            onLogout()
+                        } label: {
+                            Image(
+                                systemName:
+                                    "rectangle.portrait.and.arrow.right"
+                            )
                         }
                     }
+                }
             }
             .tabItem {
                 Label(

@@ -5,10 +5,29 @@
 //  Created by Dragan Kos on 12. 8. 2025..
 //
 
-#if DEBUG
-import Atlantis
-#endif
+import FirebaseCore
 import SwiftUI
+
+#if DEBUG
+    import Atlantis
+#endif
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+    func application(
+        _ application: UIApplication,
+
+        didFinishLaunchingWithOptions launchOptions: [UIApplication
+            .LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+
+        FirebaseApp.configure()
+
+        return true
+
+    }
+
+}
 
 @main
 struct FitSocialApp: App {
@@ -25,6 +44,8 @@ struct FitSocialApp: App {
         // Atlantis.start("Your's Macbook Pro")
         #endif
     }
+
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     @State var container = FitSocialContainer()
 

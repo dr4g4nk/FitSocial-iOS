@@ -9,24 +9,16 @@ import AVFoundation
 import SwiftUI
 
 public struct MediaUi: Identifiable, Equatable, Hashable {
-    public enum Kind: Equatable, Hashable {
-        case image(Data)
-        case video(URL, thumbnail: UIImage?)
-        case remoteImage(
-            id: Int,
-            url: URL,
-        )
-        case remoteVideo(
-            id: Int,
-            url: URL,
-            thumbnailURL: URL?,
-        )
-    }
-    public let id = UUID()
-    public let kind: Kind
+    
+    public let id:UUID
+    public let filename: String
+    public let kind: MediaKind
     public let mimeType: String?
 
-    public init(kind: Kind, mimeType: String?) {
+    public init(filename: String? = nil, kind: MediaKind, mimeType: String?) {
+        let id = UUID()
+        self.id = id
+        self.filename = filename ?? id.uuidString
         self.kind = kind
         self.mimeType = mimeType
     }

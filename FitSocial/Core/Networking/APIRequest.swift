@@ -113,7 +113,7 @@ public final class APIClient {
     private let refreshPath: String
     private var refreshTask: Task<Void, Error>?
 
-    private let delegate = UploadSessionDelegate()
+    private let delegate: UploadSessionDelegate
     private let writer: MultipartBodyWriter
 
     public init(
@@ -125,11 +125,32 @@ public final class APIClient {
         refreshPath: String = "auth/refresh"
     ) {
         self.baseURL = baseURL
+
+        let delegate = UploadSessionDelegate()
+        self.delegate = delegate
+
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true  // pametno sa slabim mrežama
+        config.allowsCellularAccess = true
+        config.allowsConstrainedNetworkAccess = true  // npr. Low Data Mode – ako želiš ipak slati
+        config.allowsExpensiveNetworkAccess = true  // 5G/roaming—po potrebi
+        config.timeoutIntervalForRequest = 60  // request timeout
+        config.timeoutIntervalForResource = 60 * 2 // cijeli transfer (10 min, prilagodi)
+        config.httpMaximumConnectionsPerHost = 6  // default OK
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        config.urlCache = nil  // obično ne keširaš upload rute
+        config.networkServiceType = .responsiveData  // ili .default
+
+        self.urlSession = URLSession(
+            configuration: config,
+            delegate: delegate,
+            delegateQueue: nil
+        )
+
         self.session = session
         self.encoder = encoder
         self.decoder = decoder
 
-        self.urlSession = urlSession
         self.refreshPath = refreshPath
 
         self.writer = MultipartBodyWriter(encoder: encoder)
@@ -274,7 +295,7 @@ public final class APIClient {
                 throw APIError.noResponse
             }
 
-            //     let str = String(bytes: data, encoding: .utf8)
+            let str = String(bytes: data, encoding: .utf8)
 
             switch http.statusCode {
             case 200..<300, 400:

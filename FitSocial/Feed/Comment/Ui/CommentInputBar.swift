@@ -10,13 +10,28 @@ import SwiftUI
 struct CommentInputBar: View {
     @Binding var text: String
     let isSending: Bool
+    var isFocused: FocusState<Bool>.Binding
     var onSend: () -> Void
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 8) {
+        HStack(alignment: .center, spacing: 8) {
             TextField("Napiši komentar…", text: $text, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(Color(.separator), lineWidth: 0.5)
+                )
                 .lineLimit(1...5)
+                .focused(isFocused)
+                .accessibilityLabel("Napiši komentar…")
+                .onSubmit {
+                    if !isSending
+                        && !text.trimmingCharacters(in: .whitespacesAndNewlines)
+                            .isEmpty
+                    {
+                        onSend()
+                    }
+                }
 
             Button(action: onSend) {
                 if isSending {
@@ -25,7 +40,11 @@ struct CommentInputBar: View {
                     Image(systemName: "paperplane.fill")
                 }
             }
-            .disabled(isSending || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(
+                isSending
+                    || text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        .isEmpty
+            )
         }
         .padding(.horizontal)
         .padding(.top, 8)

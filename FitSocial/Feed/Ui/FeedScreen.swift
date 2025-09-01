@@ -17,7 +17,6 @@ struct FeedScreen: View {
     
     @State private var feedViewModel: FeedViewModel
     @State private var commentsViewModel: CommentsViewModel? = nil
-    @State private var feedPath = NavigationPath()
 
     init(container: FeedContainer, onComment: @escaping (_ postId: Int) -> Void, onViewProfile: @escaping (User) -> Void, onEditPost: @escaping (Post) -> Void) {
         self.container = container
