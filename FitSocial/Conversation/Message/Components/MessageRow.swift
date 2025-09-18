@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct MessageRow: View {
-    let messageUi: MessageUi
-
+    let message: MessageEntity
+    
+    @State private var showTime = false
+    
     private func timeShort(_ date: Date) -> String {
         let f = DateFormatter()
         f.doesRelativeDateFormatting = true
@@ -21,7 +23,7 @@ struct MessageRow: View {
     private func systemIcon(for fileName: String) -> String {
         let ext = (fileName as NSString).pathExtension.lowercased()
         switch ext {
-        case "pdf": return "doc.richtext"  // ili "doc.text.fill"
+        case "pdf": return "doc.richtext"
         case "doc", "docx": return "doc.text"
         case "xls", "xlsx": return "tablecells"
         case "ppt", "pptx": return "doc.on.clipboard"
@@ -32,17 +34,21 @@ struct MessageRow: View {
 
     var body: some View {
         HStack(alignment: .bottom) {
-            if messageUi.my { Spacer(minLength: 40) }
+            if message.my {
+                Spacer(minLength: 40)
+            } else {
+                AvatarImage(url: URL(string: message.user?.avatarUrl ?? ""))
+            }
 
             VStack(
-                alignment: messageUi.my ? .trailing : .leading,
+                alignment: message.my ? .trailing : .leading,
                 spacing: 4
             ) {
-                if !messageUi.content.isEmpty {
-                    Text(messageUi.content)
+                if let content = message.content, !content.isEmpty {
+                    Text(content)
                         .font(.body)
                         .foregroundStyle(
-                            messageUi.my ? .white : .primary
+                            message.my ? .white : .primary
                         )
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
@@ -52,7 +58,7 @@ struct MessageRow: View {
                                 style: .continuous
                             )
                             .fill(
-                                messageUi.my
+                                message.my
                                     ? Color.accentColor
                                     : Color(.secondarySystemBackground)
                             )
@@ -63,117 +69,109 @@ struct MessageRow: View {
                                 style: .continuous
                             )
                             .strokeBorder(
-                                messageUi.my
+                                message.my
                                     ? Color.accentColor.opacity(0.6)
                                     : Color(.separator),
-                                lineWidth: messageUi.my ? 0 : 0.5
+                                lineWidth: message.my ? 0 : 0.5
                             )
                         )
-                        .accessibilityLabel(messageUi.content)
-                } else if messageUi.attachment != nil {
-                    switch messageUi.status {
-                    case .sending(let progress):
+                        .accessibilityLabel(content)
+                } else if message.attachment != nil {
+                    switch message.status {
+                    case "sending":
                         VStack(alignment: .leading, spacing: 2) {
-                            ProgressView(value: progress)
-                            Text("\(Int(progress * 100))%").font(.caption2)
+                            ProgressView(value: message.progress)
+                            if let progress = message.progress {
+                                Text("\(Int(progress * 100))%").font(
+                                    .caption2
+                                )
                                 .foregroundStyle(.secondary)
+                            }
                         }
                         .frame(width: 140)
-                    case .sent: ZStack {}
 
-                    case .failed(let error):
+                    case "failed":
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.octagon.fill")
                                 .foregroundStyle(.red)
-                            Text(error ?? "Greška pri slanju").font(.caption2)
+                            Text(message.error ?? "Greška pri slanju").font(
+                                .caption2
+                            )
                             Button("Pokušaj ponovo") {
                             }
                             .font(.caption2)
                         }
+                    default: ZStack {}
                     }
 
-                    if let attachment = messageUi.attachment {
+                    if let attachment = message.attachment {
                         switch attachment.kind {
-                        case .image(let data, _):
-                            if let image = data {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 180, height: 180)
-                                    .clipShape(
-                                        RoundedRectangle(cornerRadius: 14)
-                                    )
+                        case "image", "remoteImage":
+                            if let url = URL(string: attachment.urlString ?? "")
+                            {
+                                FSImage(
+                                    url: url
+                                )
+                                .frame(width: 180, height: 180)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
                             }
-                        case .video(_, let thumbnail):
-                            if let thumb = thumbnail {
-                                Image(uiImage: thumb)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 180, height: 180)
-                                    .overlay(alignment: .center) {
-                                        Image(systemName: "play.circle.fill")
-                                            .foregroundStyle(.white)
-                                            .font(.system(size: 44))
-                                            .shadow(radius: 4)
-                                    }
-                                    .clipShape(
-                                        RoundedRectangle(cornerRadius: 14)
-                                    )
+                        case "video", "remoteVideo":
+                            if let url = URL(
+                                string: attachment.thumbnailURLString ?? ""
+                            ) {
+                                FSImage(
+                                    url: url
+                                ).overlay(alignment: .center) {
+                                    Image(systemName: "play.circle.fill")
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 44))
+                                        .shadow(radius: 4)
+                                }
+                                .frame(width: 180, height: 180)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+
                             } else {
                                 ProgressView()
                                     .frame(width: 180, height: 180)
                             }
-                        case .document(let uRL):
+                        default:
                             HStack(alignment: .center, spacing: 12) {
                                 Image(
                                     systemName: systemIcon(
-                                        for: messageUi.attachment?.filename ?? ""
+                                        for: attachment.filename
                                     )
                                 )
                                 .font(.system(size: 28, weight: .semibold))
                                 .frame(width: 36, height: 36)
                                 .foregroundStyle(
-                                    messageUi.my ? .blue : .secondary
+                                    message.my ? .blue : .secondary
                                 )
 
-                                Text(messageUi.attachment?.filename ?? "")
+                                Text(message.attachment?.filename ?? "")
                                     .font(.subheadline).fontWeight(.semibold)
                                     .lineLimit(2)
                             }
-                        case .remoteImage(_, let url):
-                            FSImage(
-                                url: url
-                            )
-                            .frame(width: 180, height: 180)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                        case .remoteVideo(_, let url, let thumbnailUrl):
-                            FSImage(
-                                url: thumbnailUrl
-                            ).overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill")
-                                    .foregroundStyle(.white)
-                                    .font(.system(size: 44))
-                                    .shadow(radius: 4)
-                            }
-                            .frame(width: 180, height: 180)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-
                         }
+
                     }
 
                 }
-                Text(timeShort(messageUi.createdAt))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .padding(messageUi.my ? .trailing : .leading, 6)
+                if showTime {
+                    Text(timeShort(message.createdAt))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(message.my ? .trailing : .leading, 6)
+                }
             }
+            if !message.my { Spacer(minLength: 40) }
 
-            if !messageUi.my { Spacer(minLength: 40) }
-        }
-        .transition(
+        }.transition(
             .opacity.combined(
-                with: .move(edge: messageUi.my ? .trailing : .leading)
+                with: .move(edge: message.my ? .trailing : .leading)
             )
         )
+        .onTapGesture {
+            showTime = true
+        }
     }
 }

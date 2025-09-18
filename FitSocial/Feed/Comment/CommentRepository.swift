@@ -7,14 +7,14 @@
 
 import Foundation
 
-public protocol CommentRepository: Repository<Int, Comment, Comment, Comment> where Service: CommentApiService{
+protocol CommentRepository: Repository<Int, Comment, Comment, Comment> where Service: CommentApiService{
     
     func getAllByPostId(postId: Int, page: Int, size: Int, sort: String) async throws -> Page<Comment>
 }
 
 
-public class CommentRepositoryImpl<Service: CommentApiService>: CommentRepository{
-    public var apiService: Service
+class CommentRepositoryImpl<Service: CommentApiService>: CommentRepository{
+    var apiService: Service
     private let session: UserSession
     
     init(apiService: Service, session: UserSession) {
@@ -22,7 +22,7 @@ public class CommentRepositoryImpl<Service: CommentApiService>: CommentRepositor
         self.session = session
     }
     
-    public func getAllByPostId(postId: Int, page: Int, size: Int, sort: String) async throws -> Page<Comment> {
+    func getAllByPostId(postId: Int, page: Int, size: Int, sort: String) async throws -> Page<Comment> {
         return try await apiService.getByPostId(postId, page: page, size: size, sort: sort, extraQuery: []).result
     }
 }

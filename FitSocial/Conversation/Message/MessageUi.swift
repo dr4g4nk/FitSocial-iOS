@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct MessageUi: Identifiable, Hashable, Copyable {
     var id: String {
@@ -14,7 +15,7 @@ struct MessageUi: Identifiable, Hashable, Copyable {
     let localId: UUID
     let messageId: Int
     let chatId: Int
-    let user: User
+    let user: User?
     let content: String
     let label: String?
     let createdAt: Date
@@ -64,6 +65,28 @@ struct AttacmentUi : Identifiable, Hashable, Copyable {
         self.kind = kind
     }
 }
+
+public enum AttachmentKind: Hashable {
+    case image(UIImage?, url: URL)
+    case video(URL, thumbnail: URL?)
+    case document(URL)
+    case remoteImage(
+        id: Int,
+        url: URL,
+    )
+    case remoteVideo(
+        id: Int,
+        url: URL,
+        thumbnailURL: URL?,
+    )
+}
+
+public struct AttachmentDto: Hashable{
+    public let filename: String
+    public let contentType: String?
+    public let kind: AttachmentKind
+}
+
 
 enum MessageUiStatus: Hashable {
     case sending(progress: Double)

@@ -57,8 +57,12 @@ public struct FSImage: View {
     }
 
     private func makeSource(url: URL, userId: Int?) -> Source {
-        let key = generateCacheKey(url, userId: userId)
-        return .network(KF.ImageResource(downloadURL: url, cacheKey: key))
+        if url.isFileURL {
+            return .provider(LocalFileImageDataProvider(fileURL: url))
+        } else {
+            let key = generateCacheKey(url, userId: userId)
+            return .network(KF.ImageResource(downloadURL: url, cacheKey: key))
+        }
     }
 
 }

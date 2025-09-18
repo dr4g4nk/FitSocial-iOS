@@ -60,47 +60,14 @@ private struct PostMediaCard: View {
                     .fill(Color.secondary.opacity(0.08))
 
                 switch media.kind {
-                case .image(let data, _):
-                    if let image = data {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(
-                                maxWidth: .infinity,
-                                minHeight: 160,
-                                maxHeight: 380
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                case .video(_, let thumbnail):
-                    if let thumb = thumbnail {
-                        Image(uiImage: thumb)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(
-                                maxWidth: .infinity,
-                                minHeight: 160,
-                                maxHeight: 380
-                            )
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill")
-                                    .font(.system(size: 44))
-                                    .shadow(radius: 4)
-                                    .foregroundStyle(.white)
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    } else {
-                        ProgressView()
-                            .frame(height: 160)
-                    }
-                case .remoteImage(_, let url):
+                case .image(_, let url), .remoteImage(_, let url):
                     FSImage(url: url).frame(
                         maxWidth: .infinity,
                         minHeight: 160,
                         maxHeight: 380
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 14))
-                case .remoteVideo(_, _, let thumbnailURL):
+                case .video(_, let thumbnailURL), .remoteVideo(_, _, let thumbnailURL):
                     FSImage(url: thumbnailURL).frame(
                         maxWidth: .infinity,
                         minHeight: 160,

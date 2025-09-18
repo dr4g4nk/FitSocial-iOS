@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol UserRepository: Repository<Int, User, User, User> where Service : UserApiService {
+protocol UserRepository: Repository<Int, User, User, User> where Service : UserApiService {
 
     func getAllFiltered(page: Int?, size: Int?, sort: String?, filterValue: String?) async throws -> Page<Entity>
 }

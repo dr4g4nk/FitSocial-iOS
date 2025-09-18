@@ -20,4 +20,8 @@ final class ProfileViewModel : PostsViewModel {
     override func getPosts(page: Int, size: Int) async throws -> Page<Post> {
         return try await repo.getAllByUserId(userId: user.id, page: page, size: size)
     }
+    
+    override func getLocalPosts(size: Int) async throws -> [Post] {
+        return try await repo.getLocalPost(userId: user.id, limit: size)
+    }
 }

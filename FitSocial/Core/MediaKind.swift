@@ -9,7 +9,7 @@ import SwiftUI
 
 public enum MediaKind: Equatable, Hashable {
     case image(UIImage?, url: URL)
-    case video(URL, thumbnail: UIImage?)
+    case video(URL, thumbnail: URL?)
     case remoteImage(
         id: Int,
         url: URL,

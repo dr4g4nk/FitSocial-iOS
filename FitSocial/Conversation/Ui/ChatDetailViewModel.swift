@@ -5,10 +5,11 @@
 //  Created by Dragan Kos on 28. 8. 2025..
 //
 
+import Observation
 import PhotosUI
+import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
-import Observation
 
 @MainActor
 @Observable
@@ -16,10 +17,11 @@ final class ChatDetailViewModel {
     private let repo: any MessageRepository
     private let chatRepo: any ChatRepository
     private let session: UserSession
+
     private(set) var chat: Chat
 
-    private var page: Int = 0
-    private var size: Int = 20
+    private(set) var page: Int = 0
+    private(set) var size: Int = 30
     private var sort: String? = "id,Desc"
 
     private var noMoreData: Bool = false
@@ -27,42 +29,55 @@ final class ChatDetailViewModel {
     var isLoading = false
     var isSending = false
     var errorMessage: String? = nil
-    var messages: [MessageUi] = []
     var draft: String = "" {
         didSet { updateInputState() }
     }
     var showCameraAndAttach: Bool = true
+    
+    var showCamera: Bool = false
 
     init(
         chat: Chat,
         session: UserSession,
+        modelContainer: ModelContainer,
         repo: any MessageRepository,
         chatRepo: any ChatRepository
     ) {
         self.repo = repo
         self.chatRepo = chatRepo
         self.session = session
+
         self.chat = chat
+
+        if chat.users.isEmpty {
+            Task {
+                let data = try? await chatRepo.getById(chat.id)
+                if let c = data {
+                    self.chat = c
+                } else {
+                    errorMessage = "Nepostojeca konverzacija"
+                }
+            }
+        }
     }
 
     func loadInitial() {
-        guard messages.isEmpty else { return }
         Task { await reload() }
     }
 
     func reload() async {
+        guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         do {
+            page = 0
             let data = try await repo.get(
                 chatId: chat.id,
                 page: page,
                 size: size,
                 sort: sort
             )
-            messages = data.content.map({ message in
-                MessageUi(message: message, status: .sent)
-            })
+            
             noMoreData = data.content.count < size
         } catch {
             errorMessage = "Greška pri učitavanju poruka."
@@ -76,20 +91,16 @@ final class ChatDetailViewModel {
         errorMessage = nil
         Task {
             do {
+                page = page + 1
                 let data = try await repo.get(
                     chatId: chat.id,
                     page: page,
                     size: size,
                     sort: sort
                 )
-                messages.append(
-                    contentsOf: data.content.map({ message in
-                        MessageUi(message: message, status: .sent)
-                    })
-                )
-                page = data.number + 1
                 noMoreData = data.content.count < size
             } catch {
+                print(error.localizedDescription)
                 errorMessage = "Greška pri učitavanju poruka."
             }
 
@@ -108,54 +119,73 @@ final class ChatDetailViewModel {
         if attacment == nil {
             isSending = true
         }
-        Task{
-            let m = MessageUi(
-                message: Message(
-                    id: -1,
-                    chatId: chat.id,
-                    user: await session.user!,
-                    content: attacment != nil ? "" : text,
-                    label: nil,
-                    createdAt: .now,
-                    updatedAt: .now,
-                    my: true
-                ),
-                status: .sending(progress: 0.0),
-                attachment: attacment != nil
-                ? AttacmentUi(
-                    filename: attacment!.filename,
-                    kind: attacment!.kind
-                ) : nil
+        Task {
+            var kind: String
+            var urlStr: String?
+            var thumbnailUrlStr: String?
+
+            var attEnt: AttachmentEntity?
+
+            if let att = attacment {
+                switch att.kind {
+                case .image(_, let url):
+                    urlStr = url.absoluteString
+                    kind = "image"
+                case .video(let url, let thummbnail):
+                    urlStr = url.absoluteString
+                    thumbnailUrlStr = thummbnail?.absoluteString
+                    kind = "video"
+                case .document(let url):
+                    urlStr = url.absoluteString
+                    kind = "document"
+                default:
+                    urlStr = nil
+                    kind = "document"
+                }
+
+                attEnt = AttachmentEntity(
+                    kind: kind,
+                    urlString: urlStr,
+                    thumbnailURLString: thumbnailUrlStr,
+                    filename: att.filename,
+                    contentType: att.contentType ?? ""
+                )
+            }
+
+            let m = MessageEntity(
+                chatId: chat.id,
+                content: attacment != nil ? "" : text,
+                label: nil,
+                createdAt: .now,
+                updatedAt: .now,
+                my: true,
+                attachment: attEnt,
+                status: "sending",
+                progress: 0.0,
             )
-            
+
             do {
-                messages.insert(m, at: 0)
-                
-                scrollToId = m.id
+                try await repo.createLocal(message: m)
                 
                 if self.chat.id > -1 {
                     let message = try await repo.create(
                         message: MessageDto(chatId: chat.id, content: text),
                         attachment: attacment
                     ) { [self] sent, total, fraction in
-                        messages = messages.map({ mes in
-                            if mes.id == m.id {
-                                return mes.copy({ m in
-                                    m.status = .sending(progress: fraction)
-                                })
+                        Task{
+                            do{
+                                try await repo.updateMessageProgress(
+                                    id: m.persistentModelID,
+                                    progress: fraction
+                                )
+                            } catch{
+                                print(error.localizedDescription)
                             }
-                            
-                            return mes
-                        })
-                    }
-                    if let message = message {
-                        messages.removeAll { mui in
-                            mui.id == m.id
                         }
-                        messages.insert(
-                            MessageUi(message: message, status: .sent),
-                            at: 0
-                        )
+                    }
+                    try await repo.deleteLocal(m)
+                    if let mess = message {
+                        try await repo.createLocal(message: mess)
                     }
                 } else {
                     let data = try await chatRepo.create(
@@ -168,44 +198,35 @@ final class ChatDetailViewModel {
                         ),
                         attachment: attacment
                     ) { [self] sent, total, fraction in
-                        messages = messages.map({ mes in
-                            if mes.id == m.id {
-                                return mes.copy({ m in
-                                    m.status = .sending(progress: fraction)
-                                })
+                        Task{
+                            do {
+                                try await repo.updateMessageProgress(
+                                    id: m.persistentModelID,
+                                    progress: fraction
+                                )
+                            } catch{
+                                print(error.localizedDescription)
                             }
-                            
-                            return mes
-                        })
+                        }
                     }
-                    
+
                     if data.success {
                         chat = data.result!.copy({ _ in })
                         await reload()
+                        try await repo.deleteLocal(m)
                     } else {
                         errorMessage = data.message
                     }
                 }
                 draft = ""
             } catch {
-                messages = messages.map({ mes in
-                    if mes.id == m.id {
-                        return mes.copy({ m in
-                            m.status = .failed(
-                                error: "Nije poslano. Pokušaj ponovo."
-                            )
-                        })
-                    }
-                    
-                    return mes
-                })
-                
+                try await repo.updateMessageError(id: m.persistentModelID, error: "Nije poslano. Pokušaj ponovo.")
+
                 errorMessage = error.localizedDescription
             }
             if attacment == nil {
                 isSending = false
-            }
-            else {
+            } else {
                 switch attacment!.kind {
                 case .image(_, let url), .video(let url, _):
                     try? FileManager.default.removeItem(at: url)
@@ -214,9 +235,28 @@ final class ChatDetailViewModel {
             }
         }
     }
+
+    func onNewPhoto(_ url: URL) {
+        sendAttachemntFromUrl(url, kind: .image(nil, url: url))
+    }
     
-    func tapCamera() {
-        // pokreni kameru (prema tvojoj implementaciji)
+    func onNewVideo(_ url: URL) {
+        Task{
+            let thumb = await Thumbnailer.makeVideoThumbnail(
+                url: url
+            )
+            sendAttachemntFromUrl(url, kind: .video(url, thumbnail: thumb))
+        }
+    }
+    
+    private func sendAttachemntFromUrl(_ url: URL, kind: AttachmentKind){
+        let attachment = AttachmentDto(
+            filename: url.lastPathComponent,
+            contentType: mimeType(for: url) ?? "",
+            kind: kind
+        )
+
+        send(attacment: attachment)
     }
 
     var showChooseDialog = false
@@ -224,13 +264,7 @@ final class ChatDetailViewModel {
     func onSelectFiles(urls: [URL]) {
         for url in urls {
             let didStart = url.startAccessingSecurityScopedResource()
-            let attachment = AttachmentDto(
-                filename: url.lastPathComponent,
-                contentType: mimeType(for: url) ?? "",
-                kind: .document(url)
-            )
-
-            send(attacment: attachment)
+            sendAttachemntFromUrl(url, kind:.document(url))
             if didStart {
                 url.stopAccessingSecurityScopedResource()
             }

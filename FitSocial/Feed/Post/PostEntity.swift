@@ -13,10 +13,11 @@ final class PostEntity : Identifiable {
     @Attribute(.unique) var id: Int
     var author: UserEntity
     var content: String
-    var likeCount: Int
+    var likeCount: Int?
     var isPublic: Bool
     var createdAt: Date
-    var isLiked: Bool
+    var isLiked: Bool?
+    @Relationship(deleteRule: .cascade)
     var activity: ActivityEntity?
     @Relationship(deleteRule: .cascade) var media: [MediaEntity]
 
@@ -27,9 +28,9 @@ final class PostEntity : Identifiable {
         author: UserEntity,
         content: String,
         createdAt: Date,
-        likeCount: Int = 0,
+        likeCount: Int? = 0,
         isPublic: Bool = false,
-        isLiked: Bool,
+        isLiked: Bool?,
         activity: ActivityEntity? = nil,
         media: [MediaEntity] = []
     ) {
@@ -43,6 +44,20 @@ final class PostEntity : Identifiable {
         self.activity = activity
         self.media = media
         self.fetchedAt = Date()
+    }
+}
+
+extension PostEntity {
+    func toDomain() -> Post {
+        Post(id: id, author: author.toDomain(), content: content, likeCount: likeCount, isPublic: isPublic, createdAt: createdAt, isLiked: isLiked, media: media.map({ m in
+            m.toDomain()
+        }), activity: activity?.toDomain())
+    }
+    
+    static func fromDomain(_ p: Post) -> PostEntity {
+        PostEntity(id: p.id, author: UserEntity.fromDomain(from: p.author), content: p.content, createdAt: p.createdAt, likeCount: p.likeCount, isPublic: p.isPublic, isLiked: p.isLiked, activity: p.activity != nil ? ActivityEntity.fromDomain(p.activity!) : nil, media: p.media.map({ m in
+            MediaEntity.fromDomain(m, isAuthenticated: !p.isPublic)
+        }))
     }
 }
 
@@ -63,5 +78,15 @@ final class ActivityEntity : Identifiable {
         self.endTime = endTime
         self.steps = steps
         self.distance = distance
+    }
+}
+
+extension ActivityEntity {
+    func toDomain()-> Activity{
+        Activity(id: id, type: type, startTime: startTime, endTime: endTime, steps: steps, distance: distance)
+    }
+    
+    static func fromDomain(_ a: Activity) -> ActivityEntity {
+        ActivityEntity(id: a.id, type: a.type, startTime: a.startTime, endTime: a.endTime, steps: a.steps, distance: a.distance)
     }
 }

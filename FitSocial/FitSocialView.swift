@@ -9,69 +9,41 @@ import Kingfisher
 import SwiftData
 import SwiftUI
 
-enum NavTab: Hashable, CaseIterable {
-    case feed, activity, messages, add, profile
-
-    var title: String {
-        switch self {
-        case .feed: "Feed"
-        case .activity: "Aktivnosti"
-        case .messages: "Poruke"
-        case .add: "Objavi"
-        case .profile: "Profil"
-        }
-    }
-    var systemImage: String {
-        switch self {
-        case .feed: "house"
-        case .activity: "bolt.heart"
-        case .messages: "bubble.left"
-        case .add: "plus.app"
-        case .profile: "person"
-        }
-    }
-}
-
 struct FitSocialView: View {
-    let container: FitSocialContainer
+    private var container: FitSocialContainer
     @Environment(AuthManager.self) var auth: AuthManager
 
     @State private var feedContainer: FeedContainer
     @State private var profileContainer: ProfileContainer
     @State private var conversationContainer: ConversationContainer
 
-    @State private var previous: NavTab? = nil
-    @State private var selected: NavTab = .feed
-    @State private var showLogin = false
-    @State private var pendingTab: NavTab?
-
-    // per-tab back stacks
-    @State private var feedPath = NavigationPath()
-    @State private var activityPath = NavigationPath()
-    @State private var profilePath = NavigationPath()
-
-    @State private var loginPath = NavigationPath()
-
     //viewModels
     @State private var loginViewModel: LoginViewModel
     @State private var registrationViewModel: RegistrationViewModel
     @State private var newPostViewModel: NewPostViewModel
 
-    private struct ActivePost: Identifiable {
-        var id: Int
-    }
+    @State private var chatsViewModel: ChatsViewModel
+    @State private var chatUserListViewModel: ChatUserListViewModel
+
+    @State private var feedPath = NavigationPath()
+    @State private var activityPath = NavigationPath()
+    @State private var conversationPath = NavigationPath()
+    @State private var profilePath = NavigationPath()
+
+    @State private var loginPath = NavigationPath()
 
     @State private var activePost: ActivePost? = nil
-
     @State private var selectedPost: Post? = nil
+    @State private var isCreating = false
+    
+    @State private var chatDetailViewModel: ChatDetailViewModel?
 
     init(container: FitSocialContainer) {
         self.container = container
+
         let feedContainer = container.makeFeedContainer()
         self.feedContainer = feedContainer
         self.profileContainer = container.makeProfileContainer()
-
-        self.conversationContainer = container.makeConversationContainer()
 
         self.loginViewModel = LoginViewModel(authRepo: container.authRepo)
         self.registrationViewModel = RegistrationViewModel(
@@ -79,29 +51,63 @@ struct FitSocialView: View {
         )
 
         self.newPostViewModel = feedContainer.makeNewPostViewModel()
+
+        let conversationContainer = container.makeConversationContainer()
+        self.conversationContainer = conversationContainer
+        self.chatsViewModel = conversationContainer.makeChatsViewModel()
+        self.chatUserListViewModel =
+            conversationContainer.makeChatUserLIstViewModel()
+    }
+
+    @State private var currentTab: NavTab = .feed
+    @State private var previousTab: NavTab? = nil
+    @State private var showLogin = false
+    @State private var showWelcome = false
+    @State private var pendingTab: NavTab?
+
+    @State private var currentChatId: Int?
+
+    private func onTabChange(_ newTab: NavTab) {
+        previousTab = currentTab
+        if needsAuth(tab: newTab) {
+            requireAuth(
+                newTab: newTab,
+                action: { self.currentTab = newTab }
+            )
+        } else {
+            currentTab = newTab
+        }
+    }
+
+    private func needsAuth(tab: NavTab) -> Bool {
+        switch tab {
+        case .messages, .add, .profile: true
+        default: false
+        }
+    }
+
+    private func requireAuth(newTab: NavTab, action: @escaping () -> Void) {
+        if auth.isLoggedIn {
+            action()
+        } else {
+            pendingTab = newTab
+            showLogin = true
+        }
     }
 
     private func onLogout() {
         Task {
             await auth.logout()
-            selected = .feed
-            previous = nil
+            currentTab = .feed
+            previousTab = nil
         }
     }
 
     var body: some View {
         let selectionBinding = Binding<NavTab>(
-            get: { selected },
+            get: { currentTab },
             set: { newValue in
-                previous = selected
-                if needsAuth(tab: newValue) {
-                    requireAuth(
-                        newTab: newValue,
-                        action: { selected = newValue }
-                    )
-                } else {
-                    selected = newValue
-                }
+                onTabChange(newValue)
 
             }
         )
@@ -114,7 +120,7 @@ struct FitSocialView: View {
                         activePost = ActivePost(id: postId)
                     },
                     onViewProfile: { user in
-                        requireAuth(newTab: selected) {
+                        requireAuth(newTab: currentTab) {
                             feedPath.append(user)
                         }
                     },
@@ -154,11 +160,8 @@ struct FitSocialView: View {
             }
             .tag(NavTab.feed)
 
-            // ACTIVITY (public: lokalne/statistike)
             NavigationStack(path: $activityPath) {
-                /*    ActivityView(vm: container.makeActivityVM(),
-                                 requireAuth: requireAuth)
-                        .navigationTitle("Aktivnosti")*/
+                ExerciseScreen(container: container)
             }
             .tabItem {
                 Label(
@@ -167,20 +170,20 @@ struct FitSocialView: View {
                 )
             }
             .tag(NavTab.activity)
-            // ADD (protected)
+
             NavigationStack {
                 NewPostView(
                     vm: newPostViewModel,
                     onSuccess: {
-                        if let prev = previous {
-                            selected = prev
-                            previous = nil
+                        if let prev = previousTab {
+                            currentTab = prev
+                            previousTab = nil
                         }
                     },
                     onCancel: {
-                        if let prev = previous {
-                            selected = prev
-                            previous = nil
+                        if let prev = previousTab {
+                            currentTab = prev
+                            previousTab = nil
                         }
                     }
                 )
@@ -190,14 +193,65 @@ struct FitSocialView: View {
             }
             .tag(NavTab.add)
 
-            ConversationScreen(conversationContainer: conversationContainer)
-                .tabItem {
-                    Label(
-                        NavTab.messages.title,
-                        systemImage: NavTab.messages.systemImage
-                    )
+            NavigationStack(path: $conversationPath) {
+                ChatsView(
+                    viewModel: chatsViewModel,
+                    onOpenChat: { chat in
+                        container.contersationNotificationHandler.currentChatId = chat.id
+                        chatDetailViewModel = conversationContainer.makeChatDetailViewModel(chat: chat)
+                        conversationPath.append(chat)
+                    }
+                )
+                .navigationTitle("Poruke")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            isCreating = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .accessibilityLabel("Novi chat")
+                    }
                 }
-                .tag(NavTab.messages)
+                .navigationDestination(for: Chat.self) { chat in
+                    ChatDetailView(
+                        vm: chatDetailViewModel!
+                    )
+                    .onDisappear {
+                        container.contersationNotificationHandler.currentChatId = nil
+                    }
+                }
+                .sheet(
+                    isPresented: $isCreating,
+                    onDismiss: { chatUserListViewModel.clear() }
+                ) {
+                    NavigationStack {
+                        ChatUserListView(
+                            vm: chatUserListViewModel,
+                            onNext: { users in
+                                chatsViewModel.create(users: users) { chat in
+                                    chatDetailViewModel = conversationContainer.makeChatDetailViewModel(chat: chat)
+                                    conversationPath.append(chat)
+                                    isCreating = false
+                                }
+                            }
+                        )
+                        .navigationTitle("Korisnici")
+                        .navigationBarTitleDisplayMode(.large)
+                    }
+                }
+                .navigationBarTitleDisplayMode(.large)
+            }.toolbar(
+                conversationPath.isEmpty ? .visible : .hidden,
+                for: .tabBar
+            )
+            .tabItem {
+                Label(
+                    NavTab.messages.title,
+                    systemImage: NavTab.messages.systemImage
+                )
+            }
+            .tag(NavTab.messages)
 
             NavigationStack(path: $profilePath) {
                 ProfileScreen(
@@ -235,16 +289,23 @@ struct FitSocialView: View {
                     vm: loginViewModel,
                     onLoggedIn: { access, refresh, user in
                         Task {
-                            try? await container.auth.didLogin(
+                            try? await auth.didLogin(
                                 access: access,
                                 refresh: refresh,
                                 user: user
                             )
                             if let target = pendingTab {
-                                previous = selected
-                                selected = target
+                                previousTab = currentTab
+                                currentTab = target
                                 pendingTab = nil
                             }
+                            
+                            container.notificationManager.checkAuthorization({granted, error in
+                                if granted == nil {
+                                    showWelcome = true
+                                }
+                            }, request: false)
+                            
                             showLogin = false
                         }
                     },
@@ -272,6 +333,14 @@ struct FitSocialView: View {
                 }
             }.presentationDetents([.large])
         }
+        .fullScreenCover(isPresented: $showWelcome) {
+            NotificationPermissionView {
+                container.notificationManager.requestAuthorization()
+                showWelcome = false
+            } onSkip: {
+                showWelcome = false
+            }
+        }
         .sheet(item: $selectedPost) { post in
             NewPostView(
                 vm: feedContainer.makeNewPostViewModel(post: post),
@@ -283,25 +352,54 @@ struct FitSocialView: View {
                 }
             )
         }
-    }
-
-    private func needsAuth(tab: NavTab) -> Bool {
-        switch tab {
-        case .messages, .add, .profile: true
-        default: false
+        .onReceive(NotificationCenter.default.publisher(for: .openChat)) {
+            note in
+            if let chatId = note.userInfo?["chatId"] as? Int {
+                if currentTab != .messages {
+                    onTabChange(.messages)
+                }
+                if container.contersationNotificationHandler.currentChatId != chatId {
+                    container.contersationNotificationHandler.currentChatId = chatId
+                    
+                    let chat = Chat(id: chatId)
+                    chatDetailViewModel = conversationContainer.makeChatDetailViewModel(chat: chat)
+                    conversationPath.append(chat)
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .exercise)) { _ in
+            if currentTab != .activity {
+                onTabChange(.activity)
+            }
         }
     }
 
-    // Helper koji možeš proslijediti u child view-ove za „akcije koje traže login“
-    private func requireAuth(newTab: NavTab, action: @escaping () -> Void) {
-        if auth.isLoggedIn {
-            action()
-        } else {
-            pendingTab = newTab
-            showLogin = true
+}
+
+
+public enum NavTab: Hashable, CaseIterable {
+    case feed, activity, messages, add, profile
+
+    var title: String {
+        switch self {
+        case .feed: "Feed"
+        case .activity: "Aktivnosti"
+        case .messages: "Poruke"
+        case .add: "Objavi"
+        case .profile: "Profil"
+        }
+    }
+    var systemImage: String {
+        switch self {
+        case .feed: "house"
+        case .activity: "figure.run"
+        case .messages: "message.fill"
+        case .add: "plus.app"
+        case .profile: "person"
         }
     }
 }
+
 
 struct FitSocialView_Previews: PreviewProvider {
 

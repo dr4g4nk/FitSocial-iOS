@@ -26,14 +26,12 @@ struct ChatsView: View {
                     currentItemId: vm.items.last?.id
                 )
             },
-            onRowTap: onOpenChat
+            onRowTap: onOpenChat,
+            onDelete: vm.onDelete
         )
         .refreshable { vm.refresh() }
         .overlay {
-            if vm.isLoading && vm.items.isEmpty {
-                ProgressView("Učitavam…")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let message = vm.errorMessage, vm.items.isEmpty {
+            if let message = vm.errorMessage, vm.items.isEmpty {
                 VStack(spacing: 12) {
                     Text("Greška").font(.headline)
                     Text(message).font(.subheadline)
@@ -70,27 +68,36 @@ struct ChatsContentView: View {
     let reachedEnd: Bool
     let loadMore: () -> Void
     let onRowTap: (Chat) -> Void
-
+    let onDelete: (Chat) -> Void
+    
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(items) { chat in
-                    ChatRowLink(chat: chat, onTap: onRowTap)
-                        .listRowSeparator(.automatic)
-                }
-
-                if isLoading {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                } else if !reachedEnd {
-                    PagingTrigger(onVisible: loadMore)
-                }
+        List {
+            if items.isEmpty {
+                ContentUnavailableView("Nema poruka za prikaz", systemImage: "bubble.left.and.text.bubble.right.rtl")
             }
-            .padding(.horizontal)
+            ForEach(items) { chat in
+                ChatRowLink(chat: chat, onTap: onRowTap)
+                    .listRowSeparator(.automatic)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            onDelete(chat)
+                        } label: {
+                            Label("Obriši", systemImage: "trash")
+                        }
+                    }
+            }
+
+            if isLoading {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+            } else if !reachedEnd {
+                PagingTrigger(onVisible: loadMore)
+            }
         }
+        .listStyle(.plain)
     }
 }
 

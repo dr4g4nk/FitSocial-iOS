@@ -10,9 +10,8 @@ import SwiftData
 
 @MainActor
 protocol PostLocalStore {
-    func latest(limit: Int) async throws -> [Post]
+    func latest(limit: Int, predicate: Predicate<PostEntity>?) async throws -> [Post]
     func upsert(posts: [Post]) async throws
-    func markStale(threshold: TimeInterval) throws -> Bool
 }
 
 @MainActor
@@ -24,10 +23,11 @@ final class PostLocalStoreImpl: PostLocalStore {
         self.session = session
     }
 
-    func latest(limit: Int) async throws -> [Post] {
+    func latest(limit: Int, predicate: Predicate<PostEntity>? = nil) async throws -> [Post] {
         let isLogedIn = try await session.isLoggedIn()
-        
+
         var desc = FetchDescriptor<PostEntity>(
+            predicate: predicate,
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
         desc.fetchLimit = limit
@@ -80,7 +80,7 @@ final class PostLocalStoreImpl: PostLocalStore {
 
     func upsert(posts: [Post]) async throws {
         let isLogedIn = try await session.isLoggedIn()
-        
+
         for dto in posts {
             // User
             let user = try upsertUser(
@@ -89,6 +89,19 @@ final class PostLocalStoreImpl: PostLocalStore {
                 last: dto.author.lastName,
                 avatar: dto.author.avatarUrl
             )
+
+            var activity: ActivityEntity?
+
+            if let a = dto.activity {
+                activity = try upsertActivity(
+                    id: a.id,
+                    type: a.type,
+                    startTime: a.startTime,
+                    endTime: a.endTime,
+                    steps: a.steps,
+                    distance: a.distance
+                )
+            }
 
             // Post
             let post =
@@ -101,7 +114,7 @@ final class PostLocalStoreImpl: PostLocalStore {
                     likeCount: dto.likeCount ?? 0,
                     isPublic: dto.isPublic,
                     isLiked: dto.isLiked ?? false,
-                    media: []
+                    activity: activity, media: []
                 )
             post.content = dto.content
             post.createdAt = dto.createdAt
@@ -127,25 +140,15 @@ final class PostLocalStoreImpl: PostLocalStore {
                 post.media.append(media)
             }
 
-            context.insert(post)  // insert ignorira duplikat ako već postoji zbog unique, ali safe je pozvati
+            context.insert(post)
         }
         try context.save()
     }
 
-    func markStale(threshold: TimeInterval) throws -> Bool {
-        let cutoff = Date().addingTimeInterval(-threshold)
-        let desc = FetchDescriptor<PostEntity>()
-        let all = try context.fetch(desc)
-        var changed = false
-        for p in all where p.fetchedAt < cutoff {
-            changed = true
-        }
-        return changed
-    }
-
     // Helpers
     private func find<T: PersistentModel & Identifiable>(
-        _ type: T.Type, id: T.ID
+        _ type: T.Type,
+        id: T.ID
     ) throws -> T? where T.ID == Int {
         var d = FetchDescriptor<T>(
             predicate: #Predicate { $0.id == id }
@@ -153,7 +156,7 @@ final class PostLocalStoreImpl: PostLocalStore {
         d.fetchLimit = 1
         return try context.fetch(d).first
     }
-    
+
     private func upsertUser(
         id: Int,
         first: String,
@@ -163,16 +166,44 @@ final class PostLocalStoreImpl: PostLocalStore {
         if let u: UserEntity = try find(UserEntity.self, id: id) {
             u.firstName = first
             u.lastName = last
-            u.avatarUrl = avatar
+            u.avatarUrl = avatar ?? ""
             return u
         }
         let u = UserEntity(
             id: id,
             firstName: first,
             lastName: last,
-            avatarUrl: avatar
+            avatarUrl: avatar ?? ""
         )
         context.insert(u)
         return u
+    }
+
+    private func upsertActivity(
+        id: Int,
+        type: String,
+        startTime: Date,
+        endTime: Date?,
+        steps: Int?,
+        distance: Double
+    ) throws -> ActivityEntity {
+        if let a: ActivityEntity = try find(ActivityEntity.self, id: id) {
+            a.type = type
+            a.startTime = startTime
+            a.endTime = endTime
+            a.steps = steps
+            a.distance = distance
+            return a
+        }
+        let a = ActivityEntity(
+            id: id,
+            type: type,
+            startTime: startTime,
+            endTime: endTime,
+            steps: steps,
+            distance: distance
+        )
+        context.insert(a)
+        return a
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PostCard: View {
+    @Environment(AuthManager.self) private var auth: AuthManager
     @Binding var post: Post
     @State private var pageIndex = 0
 
@@ -43,7 +44,7 @@ struct PostCard: View {
                 onLikeToggle: onLikeToggle
             )
         }
-        .contentShape(Rectangle())  // bitno za hvatanje cijelog prostora
+        .contentShape(Rectangle())
         .gesture(
             TapGesture(count: 2)
                 .onEnded {
@@ -55,7 +56,7 @@ struct PostCard: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16).fill(
-                Color(.secondarySystemBackground)
+                Color(.secondarySystemBackground).gradient
             )
         )
     }
@@ -63,9 +64,9 @@ struct PostCard: View {
     @ViewBuilder
     private var header: some View {
         HStack(spacing: 8) {
-            if post.author.avatarUrl != nil && !post.author.avatarUrl!.isEmpty {
+            if let url = post.author.avatarUrl, !url.isEmpty {
                 AvatarImage(
-                    url: URL(string: post.author.avatarUrl!),
+                    url: URL(string: url),
                     width: 40,
                     height: 40
                 )
@@ -79,12 +80,14 @@ struct PostCard: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button {
-                onOpenMenu(post)
-            } label: {
-                Image(systemName: "ellipsis")
+            if auth.isLoggedIn {
+                Button {
+                    onOpenMenu(post)
+                } label: {
+                    Image(systemName: "ellipsis")
+                }
+                .accessibilityLabel("Više opcija")
             }
-            .accessibilityLabel("Više opcija")
         }.onTapGesture {
             onViewProfile(post.author)
         }
@@ -108,7 +111,7 @@ struct PostCard: View {
                             onVideoDisappear: onVideoDisappear
                         )
                         .tag(idx)
-                        .frame(height: 420)  // prilagodi visinu
+                        .frame(height: 420)
                         .clipped()
                     }
                 }

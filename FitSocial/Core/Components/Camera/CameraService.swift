@@ -19,7 +19,7 @@ final class CameraService: NSObject {
     private let movieOutput = AVCaptureMovieFileOutput()
 
     // Callbacks
-    var onPhotoData: ((Data, String?) -> Void)?
+    var onPhotoURL: ((URL) -> Void)?
     var onVideoURL: ((URL) -> Void)?
     var onError: ((String) -> Void)?
 
@@ -74,7 +74,6 @@ final class CameraService: NSObject {
                 return
             }
             self.session.addOutput(self.photoOutput)
-            //self.photoOutput.maxPhotoDimensions =
 
             // Movie
             if self.session.canAddOutput(self.movieOutput) {
@@ -197,7 +196,6 @@ final class CameraService: NSObject {
         if let device = videoInput?.device, device.isFlashAvailable {
             settings.flashMode = flash
         }
-        settings.maxPhotoDimensions = photoOutput.maxPhotoDimensions
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
 
@@ -208,27 +206,39 @@ final class CameraService: NSObject {
         }
         guard !movieOutput.isRecording else { return }
         movieOutput.connection(with: .video)?.videoRotationAngle = 90
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString).appendingPathExtension(
-                "mov"
-            )
-        movieOutput.startRecording(to: url, recordingDelegate: self)
+        do{
+            let dirUrl = URL.documentsDirectory.appending(component: "Movie", directoryHint: .isDirectory)
+           try checkDirectory(dirUrl)
+            let url = dirUrl
+                .appendingPathComponent(UUID().uuidString).appendingPathExtension(
+                    "mov"
+                )
+            movieOutput.startRecording(to: url, recordingDelegate: self)
+        } catch {
+                onError?(error.localizedDescription)
+        }
     }
 
     func stopRecording() {
         if movieOutput.isRecording { movieOutput.stopRecording() }
     }
+    
+    private func checkDirectory(_ url: URL) throws {
+        if !FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        }
+    }
 }
 
 extension CameraService: AVCapturePhotoCaptureDelegate {
-    func mimeType(from photo: AVCapturePhoto) -> String? {
+    func mimeType(from photo: AVCapturePhoto) -> (String, String?)? {
         guard let data = photo.fileDataRepresentation() else {
             return nil
         }
         return mimeType(fromImageData: data)
     }
 
-    func mimeType(fromImageData data: Data) -> String? {
+    func mimeType(fromImageData data: Data) -> (String, String?)? {
         guard
             let src = CGImageSourceCreateWithData(data as CFData, nil),
             let typeId = CGImageSourceGetType(src) as String?,
@@ -237,7 +247,7 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
         else {
             return nil
         }
-        return mime // npr. "image/heic" ili "image/jpeg"
+        return (mime, ut.preferredFilenameExtension)
     }
     
     func photoOutput(
@@ -249,9 +259,23 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             onError?("Foto greška: \(error.localizedDescription)")
             return
         }
+        
         guard let data = photo.fileDataRepresentation() else { return }
-        let mime = mimeType(fromImageData: data)
-        onPhotoData?(data, mime)
+        
+        do{
+            let type = mimeType(fromImageData: data)
+            let dirUrl = URL.documentsDirectory.appending(component: "Photos", directoryHint: .isDirectory)
+            try checkDirectory(dirUrl)
+            let url = dirUrl
+                .appendingPathComponent(UUID().uuidString).appendingPathExtension(
+                    type?.1 ?? "jpg"
+                )
+            try data.write(to: url, options: .atomic)
+            
+            onPhotoURL?(url)
+        } catch {
+            onError?(error.localizedDescription)
+    }
     }
 }
 

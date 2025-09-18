@@ -31,9 +31,6 @@ public protocol APIService<Id, Model, CreateBody, UpdateBody> {
 
 
 public extension APIService {
-    
-    
-    
     @discardableResult
     func _getById(_ id: Id, requiresAuth: Bool = true) async throws -> ApiResponse<Model> {
         try await api.get("\(basePath)/\(id)", requiresAuth: requiresAuth)

@@ -10,16 +10,21 @@ import Security
 
 public protocol TokenStore {
     func save(access: String, refresh: String?) throws
+    func saveFcmToken(fcmToken: String) throws
     func readAccess() throws -> String?
     func readRefresh() throws -> String?
+    func readFcmToken() throws -> String?
+    
     func clear() throws
 }
 
-/// Keychain implementacija (Generic Password)
 public final class KeychainTokenStore: TokenStore {
     private let service: String
     private let accessAccount = "access_token"
     private let refreshAccount = "refresh_token"
+    private let fcmAccount = "fcm_token"
+    
+    public static let fitSocial = KeychainTokenStore(service: "app.fitsocial")
 
     public init(service: String) {
         self.service = service
@@ -31,6 +36,10 @@ public final class KeychainTokenStore: TokenStore {
             try upsert(value: refresh, account: refreshAccount)
         }
     }
+    
+    public func saveFcmToken(fcmToken: String) throws {
+        try upsert(value: fcmToken, account: fcmAccount)
+    }
 
     public func readAccess() throws -> String? {
         try read(account: accessAccount)
@@ -39,13 +48,16 @@ public final class KeychainTokenStore: TokenStore {
     public func readRefresh() throws -> String? {
         try read(account: refreshAccount)
     }
+    
+    public func readFcmToken() throws -> String? {
+        try read(account: fcmAccount)
+    }
 
     public func clear() throws {
         try delete(account: accessAccount)
         try delete(account: refreshAccount)
     }
 
-    // MARK: - Private Keychain helpers
 
     private func upsert(value: String, account: String) throws {
         let data = Data(value.utf8)

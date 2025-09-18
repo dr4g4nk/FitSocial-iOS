@@ -21,7 +21,7 @@ final class LoginViewModel {
     var error: String?
 
     var isValid: Bool {
-        email.contains("@") && email.contains(".") && password.count >= 6
+        !email.isEmpty && password.count >= 6
     }
     
     private func clearForm(){

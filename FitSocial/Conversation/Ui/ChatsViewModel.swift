@@ -18,15 +18,26 @@ final class ChatsViewModel {
     var errorMessage: String? = nil
     var items: [Chat] = []
     var searchText: String = ""
-    
+
     var showUsersForNewChat = false
-    
+
     private(set) var reachedEnd = false
 
     private var searchTask: Task<Void, Never>? = nil
 
     init(repo: any ChatRepository) {
         self.repo = repo
+        
+        Task{
+            do{
+                let data = try await repo.getLocalLatest(size: size)
+                if items.isEmpty {
+                    items = data
+                }
+            } catch{
+                print(error.localizedDescription)
+            }
+        }
     }
 
     private var loadTask: Task<Void, Never>? = nil
@@ -37,7 +48,7 @@ final class ChatsViewModel {
     }
 
     private var page: Int = 0
-    private var size: Int = 20
+    private var size: Int = 30
     private var sort: String? = "lastMessageTime,Desc"
 
     private var lastAction: Action?
@@ -102,7 +113,7 @@ final class ChatsViewModel {
 
     public func retry() {
         errorMessage = nil
-        
+
         switch lastAction {
         case .refresh:
             refresh()
@@ -131,5 +142,37 @@ final class ChatsViewModel {
     private func normalizedQuery(_ q: String) -> String? {
         let trimmed = q.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    func create(users: [User], onSuccess: @escaping (Chat) -> Void) {
+        Task {
+            let data = try await repo.create(
+                chat: .init(
+                    id: -1,
+                    content: "",
+                    userIds: users.map({ usr in
+                        usr.id
+                    })
+                ),
+                attachment: nil
+            ) { sent, total, fraction in }
+
+            if data.success {
+                let chat = data.result!.copy({ _ in })
+                items.insert(chat, at: 0)
+                onSuccess(chat)
+            } else {
+                errorMessage = data.message
+            }
+        }
+    }
+
+    func onDelete(chat: Chat) {
+        Task {
+            try await repo.delete(chat.id)
+            items.removeAll { c in
+                c.id == chat.id
+            }
+        }
     }
 }

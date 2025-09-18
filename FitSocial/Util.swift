@@ -28,3 +28,8 @@ public enum Action: Equatable {
     case refresh
     case loadMore
 }
+
+
+public struct ActivePost: Identifiable {
+    public var id: Int
+}

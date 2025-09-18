@@ -8,7 +8,7 @@
 import Foundation
 
 extension JSONDecoder {
-    static func instantDecoder() -> JSONDecoder {
+    public static func instantDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         
         let formatter = ISO8601DateFormatter()
@@ -30,7 +30,7 @@ extension JSONDecoder {
 }
 
 extension JSONEncoder {
-    static func instantEncoder() -> JSONEncoder {
+    public static func instantEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         
         let formatter = ISO8601DateFormatter()

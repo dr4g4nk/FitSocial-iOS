@@ -7,9 +7,7 @@
 
 import Foundation
 
-public protocol PostRepository: Repository<Int, Post, Post, Post>
-where Service: PostApiService {
-
+protocol PostRepository: Repository<Int, Post, Post, Post> where Service: PostApiService {
     func likePost(postId: Int) async throws
     func getAllByUserId(userId: Int, page: Int?, size: Int?) async throws
         -> Page<Post>
@@ -22,9 +20,14 @@ where Service: PostApiService {
         newMediaOrder: [Int],
         newMedia: [MediaUi]
     ) async throws -> ApiResponse<Post?>
+
+    func getLocalPost(userId: Int, limit: Int?) async throws
+        -> [Post]
+    func getLocalPost(limit: Int?) async throws
+        -> [Post]
 }
 
-public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
+class PostRepositoryImpl<Service: PostApiService>: PostRepository {
     public var apiService: Service
     private let session: UserSession
     private let localStore: PostLocalStore
@@ -36,36 +39,28 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
         self.localStore = localStore
     }
 
-    public func likePost(postId: Int) async throws {
+    func likePost(postId: Int) async throws {
         let _ = try await apiService.likePost(postId)
     }
 
-    public func getAll(page: Int?, size: Int?) async throws -> Page<Post> {
-        do {
-            let resultPage = try await apiService.getAll(page: page, size: size)
-            return resultPage.result
-        } catch {
-            if let page = page, page != 0 {
-                return Page(
-                    content: [],
-                    number: page,
-                    size: size!,
-                    totalElements: 0,
-                    totalPages: page
-                )
+    func _getAll(page: Int?, size: Int?, sort: String?, query: [URLQueryItem]) async throws -> Page<Post>{
+        let resultPage = try await apiService.getAll(page: page, size: size, sort: sort, extraQuery: query)
+        if page == 0 && resultPage.success {
+            Task {
+                do {
+                    try await localStore.upsert(
+                        posts: resultPage.result.content
+                    )
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
-            let data = try await localStore.latest(limit: 30)
-            return Page(
-                content: data,
-                number: 0,
-                size: 30,
-                totalElements: 30,
-                totalPages: 1
-            )
         }
+
+        return resultPage.result
     }
 
-    public func getAllByUserId(userId: Int, page: Int?, size: Int?) async throws
+    func getAllByUserId(userId: Int, page: Int?, size: Int?) async throws
         -> Page<Post>
     {
         let resultPage = try await apiService.getAllByUserId(
@@ -73,10 +68,22 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
             page: page,
             size: size
         )
+
+        if page == 0 && resultPage.success {
+            Task {
+                do {
+                    try await localStore.upsert(
+                        posts: resultPage.result.content
+                    )
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
         return resultPage.result
     }
 
-    public func create(post: PostDto, media: [MediaUi]) async throws
+    func create(post: PostDto, media: [MediaUi]) async throws
         -> ApiResponse<Post?>
     {
         let response = try await apiService.create(
@@ -101,17 +108,25 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
                 }
             }
         )
+        
+        if response.success, let post = response.result {
+            Task{
+                do{
+                    try await localStore.upsert(posts: [post])
+                } catch{}
+            }
+        }
 
         return response
     }
 
-    public func update(
+    func update(
         id: Int,
         post: PostDto,
         newMediaOrder: [Int],
         newMedia: [MediaUi]
     ) async throws -> ApiResponse<Post?> {
-        return try await apiService.update(
+        let response = try await apiService.update(
             id: post.id,
             fields: [
                 .init(name: "post", value: post),
@@ -137,5 +152,56 @@ public class PostRepositoryImpl<Service: PostApiService>: PostRepository {
                 }
             }
         )
+        
+        if response.success, let post = response.result {
+            Task{
+                do{
+                    try await localStore.upsert(posts: [post])
+                } catch{}
+            }
+        }
+        
+        return response
+    }
+
+    let limit = 20
+    func getLocalPost(userId: Int, limit: Int?) async throws -> [Post] {
+        let isAuthenticated = try await session.isLoggedIn()
+
+        var predicate: Predicate<PostEntity>?
+        if isAuthenticated {
+            predicate = #Predicate { p in
+                p.author.id == userId
+            }
+        } else {
+            predicate = #Predicate { p in
+                p.isPublic == true && p.author.id == userId
+            }
+        }
+
+        return try await localStore.latest(
+            limit: limit ?? self.limit,
+            predicate: predicate
+        )
+    }
+
+    func getLocalPost(limit: Int?) async throws -> [Post] {
+        let isAuthenticated = try await session.isLoggedIn()
+
+        if !isAuthenticated {
+            let predicate: Predicate<PostEntity>? = #Predicate { p in
+                p.isPublic == true
+            }
+            return try await localStore.latest(
+                limit: limit ?? self.limit,
+                predicate: predicate
+            )
+        } else {
+            return try await localStore.latest(
+                limit: limit ?? self.limit,
+                predicate: nil
+            )
+        }
+
     }
 }

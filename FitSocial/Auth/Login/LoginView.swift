@@ -44,7 +44,7 @@ struct LoginView: View {
                 VStack(spacing: 16) {
                     // Email
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Email")
+                        Text("Email ili korisničko ime")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .accessibilityHidden(true)

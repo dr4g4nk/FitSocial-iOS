@@ -17,6 +17,7 @@ final class NewPostViewModel {
     // INPUTS
     var text: String = ""
     var postMedia: [MediaUi] = []
+    var isPublic = false
 
     // LIMITS
     let maxAttachments = 10
@@ -58,6 +59,7 @@ final class NewPostViewModel {
             self.saveButtonLabel = "Sačuvaj"
             
             self.text = post.content
+            self.isPublic = post.isPublic
             self.post = post
             self.postMedia = post.media.sorted(by: { m1, m2 in
                 m1.order < m2.order
@@ -111,8 +113,8 @@ final class NewPostViewModel {
         }
     }
 
-    func appendCameraPhoto(_ data: Data, mimeType:String?) {
-        //postMedia.append(.init(kind: .image(data), mimeType: mimeType))
+    func appendCameraPhoto(_ url: URL) {
+        postMedia.append(.init(kind: .image(nil, url: url), mimeType: mimeType(for: url)))
     }
 
     func appendCameraVideo(_ url: URL) {
@@ -129,6 +131,7 @@ final class NewPostViewModel {
     func clear(){
         postMedia = []
         text = ""
+        isPublic = false
     }
 
     func moveAttachment(from sourceID: UUID, to targetID: UUID?) {
@@ -161,6 +164,7 @@ final class NewPostViewModel {
                 var order: [Int] = []
                 
                 dto.content = self.text
+                dto.isPublic = self.isPublic
                 
                 switch mode {
                 case .create:

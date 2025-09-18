@@ -14,7 +14,7 @@ public struct Chat : Identifiable, Hashable, Codable, Copyable{
     public let lastMessageTime: Date?
     public var users: [User]
     
-    init(id: Int, subject: String? = nil, text: String? = nil, lastMessageTime: Date? = .now, users: [User] = []) {
+    init(id: Int, subject: String? = nil, text: String? = nil, lastMessageTime: Date? = nil, users: [User] = []) {
         self.id = id
         self.subject = subject
         self.text = text
@@ -27,6 +27,14 @@ public struct Chat : Identifiable, Hashable, Codable, Copyable{
             user.displayName
         }).joined(separator: ",")
     }
+    
+    public static func == (lhs: Chat, rhs: Chat) -> Bool {
+            lhs.id == rhs.id
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
 }
 
 public struct ChatDto : Identifiable, Codable, Copyable{

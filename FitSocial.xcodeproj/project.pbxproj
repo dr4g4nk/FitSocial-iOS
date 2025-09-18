@@ -10,6 +10,9 @@
 		D80BC9C92E5CF009007D5BC8 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = D80BC9C82E5CF009007D5BC8 /* Atlantis */; };
 		D88C48F62E6470BB0080A5BA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D88C48F52E6470BB0080A5BA /* FirebaseAnalytics */; };
 		D88C48F82E6470BB0080A5BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D88C48F72E6470BB0080A5BA /* FirebaseMessaging */; };
+		D8A2EB482E781C24003A4C1E /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A2EB472E781C24003A4C1E /* MessageListView.swift */; };
+		D8A2EB4F2E788073003A4C1E /* img.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D8A2EB4D2E788073003A4C1E /* img.jpg */; };
+		D8A2EB502E788073003A4C1E /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D8A2EB4E2E788073003A4C1E /* video.mp4 */; };
 		D8DD858C2E530D0B003BAA6F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D8DD858B2E530D0B003BAA6F /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -30,7 +33,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D86FAB542E65E4B30028E8CE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		D8A2EB472E781C24003A4C1E /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
+		D8A2EB4D2E788073003A4C1E /* img.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img.jpg; sourceTree = "<group>"; };
+		D8A2EB4E2E788073003A4C1E /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video.mp4; sourceTree = "<group>"; };
 		D8B111AB2E4B263E009F6748 /* FitSocial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitSocial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8B111BA2E4B2640009F6748 /* FitSocialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8B111C42E4B2640009F6748 /* FitSocialUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +122,9 @@
 				D8B111BD2E4B2640009F6748 /* FitSocialTests */,
 				D8B111C72E4B2640009F6748 /* FitSocialUITests */,
 				D8B111AC2E4B263E009F6748 /* Products */,
+				D8A2EB472E781C24003A4C1E /* MessageListView.swift */,
+				D8A2EB4E2E788073003A4C1E /* video.mp4 */,
+				D8A2EB4D2E788073003A4C1E /* img.jpg */,
 			);
 			sourceTree = "<group>";
 		};
@@ -126,6 +148,7 @@
 				D8B111A72E4B263E009F6748 /* Sources */,
 				D8B111A82E4B263E009F6748 /* Frameworks */,
 				D8B111A92E4B263E009F6748 /* Resources */,
+				D86FAB542E65E4B30028E8CE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -245,6 +268,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8A2EB4F2E788073003A4C1E /* img.jpg in Resources */,
+				D8A2EB502E788073003A4C1E /* video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8A2EB482E781C24003A4C1E /* MessageListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +445,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -432,21 +459,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FitSocial/FitSocial.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B5LFUBRQSP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitSocial/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Aplikaciji je potrebna kamera za fotografije i video.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Aplikaciji je potreban pristup broju koraka iz Zdravlja kako bismo prikazali vaše dnevne statistike i napredak. Podatke koristimo samo za ovu svrhu.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Aplikaciji je potreban upis u Zdravlje kako bi mogla sačuvati vaše aktivnosti i održati evidenciju tačnom.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka u videu.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Ova aplikacija koristi lokaciju za praćenje vaših fitnes aktivnosti čak i kada nije otvorena.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Ova aplikacija koristi lokaciju za praćenje vaših fitnes aktivnosti.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Ova aplikacija treba dopuštenje za spremanje fotografija i videa u vašu biblioteku.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -467,21 +502,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FitSocial/FitSocial.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B5LFUBRQSP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FitSocial/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Aplikaciji je potrebna kamera za fotografije i video.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Aplikaciji je potreban pristup broju koraka iz Zdravlja kako bismo prikazali vaše dnevne statistike i napredak. Podatke koristimo samo za ovu svrhu.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Aplikaciji je potreban upis u Zdravlje kako bi mogla sačuvati vaše aktivnosti i održati evidenciju tačnom.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network. Atlantis uses it to transfer the data from your iOS app to Proxyman macOS for debugging purposes.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka u videu.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Ova aplikacija koristi lokaciju za praćenje vaših fitnes aktivnosti čak i kada nije otvorena.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Ova aplikacija koristi lokaciju za praćenje vaših fitnes aktivnosti.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Mikrofon je potreban za snimanje zvuka.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Ova aplikacija treba dopuštenje za spremanje fotografija i videa u vašu biblioteku.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -14,4 +14,8 @@ final class FeedViewModel: PostsViewModel {
     override func getPosts(page: Int, size: Int) async throws -> Page<Post> {
         return try await repo.getAll(page: page, size: size)
     }
+    
+    override func getLocalPosts(size: Int) async throws -> [Post] {
+        return try await repo.getLocalPost(limit: size)
+    }
 }

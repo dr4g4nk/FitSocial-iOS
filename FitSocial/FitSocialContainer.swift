@@ -23,11 +23,19 @@ final class FitSocialContainer {
 
     let authRepo: AuthRepository
 
+    let fcmRepo: any FcmRepository
+    let messageRepo: any MessageRepository
+
+    var contersationNotificationHandler: ConversationNotificationHandler
+    
+    let notificationManager = NotificationManager.shared
     init() {
         let schema = Schema([
             UserDataEntity.self,
             UserEntity.self, PostEntity.self, MediaEntity.self,
-            ActivityEntity.self,
+            ActivityEntity.self, Exercise.self, LocationPoint.self,
+            WorkoutReminderEntity.self,
+            ChatEntity.self, ChatUserEntity.self, MessageEntity.self, AttachmentEntity.self
         ])
 
         do {
@@ -43,7 +51,8 @@ final class FitSocialContainer {
             fatalError("Could not create ModelContainer: \(error)")
         }
 
-        let tokenStore = KeychainTokenStore(service: "app.fitsocial")
+        
+        let tokenStore = KeychainTokenStore.fitSocial
         let currentUserStore = CurrentUserStoreImpl(
             container: modelContainer
         )
@@ -66,6 +75,13 @@ final class FitSocialContainer {
         self.auth = AuthManager(session: session)
 
         self.authRepo = AuthRepositoryImpl(api: apiClient, session: session)
+
+        self.fcmRepo = FcmRepositoryImpl(apiClient: apiClient)
+
+        let messageApiService = MessageApiServiceImpl(api: apiClient)
+        self.messageRepo = MessageRepositoryImpl(apiService: messageApiService, modelContainer: modelContainer)
+        
+        self.contersationNotificationHandler = ConversationNotificationHandler(modelContainer: self.modelContainer, decoder: jsonDecoder)
     }
 
     func makeFeedContainer() -> FeedContainer {
@@ -83,8 +99,8 @@ final class FitSocialContainer {
             modelContext: ModelContext(modelContainer)
         )
     }
-    
+
     func makeConversationContainer() -> ConversationContainer {
-        ConversationContainer(apiClient: self.apiClient, session: self.session)
+        ConversationContainer(apiClient: self.apiClient, session: self.session, modelContainer: self.modelContainer)
     }
 }

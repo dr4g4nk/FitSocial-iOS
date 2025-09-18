@@ -25,18 +25,33 @@ public class PostsViewModel {
 
     // paginacija
     fileprivate var nextPage: Int? = 0
-    fileprivate let pageSize = 20
+    fileprivate let pageSize = 30
 
     init(repo: any PostRepository) {
         self.repo = repo
+        
+        Task{
+            do{
+                let data = try await getLocalPosts(size: pageSize)
+                if posts.isEmpty {
+                    posts = data
+                }
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
+        }
     }
-
     
     private var lastFailedAction: Action?
 
     func getPosts(page: Int, size: Int) async throws -> Page<Post> {
         fatalError("Subclasses must override")
     }
+    
+    func getLocalPosts(size: Int) async throws -> [Post]{
+        fatalError("Subclasses must override")
+    }
+    
 
     public func loadFirstPage() {
         if fetchTask != nil { return }

@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import SwiftData
 
 @MainActor
 public class ConversationContainer{
     
     private let apiClient: APIClient
     private let session: UserSession
+    private let modelContainer: ModelContainer
     
     private let userRepository: any UserRepository
     
@@ -20,16 +22,17 @@ public class ConversationContainer{
     
     private let messageRepository: any MessageRepository
     
-    init(apiClient: APIClient, session: UserSession) {
+    init(apiClient: APIClient, session: UserSession, modelContainer: ModelContainer) {
         self.apiClient = apiClient
         self.session = session
+        self.modelContainer = modelContainer
         
         let chatApiService = ChatApiServiceImpl(api: apiClient)
         self.chatApiService = chatApiService
-        self.chatRepository = ChatRepositoryImpl(apiService: chatApiService)
+        self.chatRepository = ChatRepositoryImpl(apiService: chatApiService, modelContainer: modelContainer)
         
         let messageApiService = MessageApiServiceImpl(api: apiClient)
-        self.messageRepository = MessageRepositoryImpl(apiService: messageApiService)
+        self.messageRepository = MessageRepositoryImpl(apiService: messageApiService, modelContainer: modelContainer)
         
         let userApiService = UserApiServiceImpl(api: apiClient)
         self.userRepository = UserRepositoryImpl(apiService: userApiService)
@@ -41,7 +44,7 @@ public class ConversationContainer{
     }
     
     func makeChatDetailViewModel(chat: Chat) -> ChatDetailViewModel {
-        ChatDetailViewModel(chat: chat, session: session, repo: messageRepository, chatRepo: chatRepository)
+        ChatDetailViewModel(chat: chat, session: session, modelContainer: modelContainer, repo: messageRepository, chatRepo: chatRepository)
     }
     
     func makeChatUserLIstViewModel() -> ChatUserListViewModel {
