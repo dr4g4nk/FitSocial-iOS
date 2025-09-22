@@ -10,14 +10,16 @@ import SwiftUI
 public struct SettingsButton: View {
     @Environment(\.openURL) private var openURL
 
+    var url: URL?
     var action: () -> Void = {}
-    init(action: @escaping () -> Void = {}) {
+    init(url: URL? = URL(string: UIApplication.openSettingsURLString) ,action: @escaping () -> Void = {}) {
+        self.url = url
         self.action = action
     }
 
     public var body: some View {
         Button("Otvori podešavanja") {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
+            if let url = url {
                 openURL(url)
             }
 

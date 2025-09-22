@@ -25,7 +25,6 @@ class FitSocialAppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate,
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        print(URL.applicationSupportDirectory.path(percentEncoded: false))
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
@@ -195,6 +194,8 @@ struct FitSocialApp: App {
     @UIApplicationDelegateAdaptor(FitSocialAppDelegate.self) var delegate
     @State var container = FitSocialContainer()
 
+    @StateObject private var themeManager = ThemeManager()
+
     init() {
         delegate.container = container
         #if DEBUG
@@ -208,11 +209,21 @@ struct FitSocialApp: App {
             FitSocialView(container: container)
                 .environment(container.auth)
                 .environment(LocationManager.shared)
+                .environmentObject(themeManager)
+                .preferredColorScheme(resolveColorScheme(themeManager.appTheme))
                 .modelContainer(container.modelContainer)
                 .environment(container.contersationNotificationHandler)
                 .onOpenURL { url in
                     DeepLinkRouter.shared.handle(url: url)
                 }
+        }
+    }
+
+    private func resolveColorScheme(_ theme: AppTheme) -> ColorScheme? {
+        switch theme {
+        case .light: return .light
+        case .dark: return .dark
+        case .system: return nil
         }
     }
 }

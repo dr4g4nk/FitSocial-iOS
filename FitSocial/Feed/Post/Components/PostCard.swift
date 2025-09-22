@@ -56,7 +56,7 @@ struct PostCard: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16).fill(
-                Color(.secondarySystemBackground).gradient
+                Color(.secondarySystemBackground)
             )
         )
     }

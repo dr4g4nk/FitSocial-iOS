@@ -114,7 +114,7 @@ struct WorkoutReminderView: View {
                     "Pristup odbijen",
                     isPresented: $vm.showPermissionAlert,
                     actions: {
-                        SettingsButton {
+                        SettingsButton(url: URL(string: UIApplication.openNotificationSettingsURLString)) {
                             vm.showPermissionAlert = false
                         }
                         Button("Kasnije") {

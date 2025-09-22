@@ -10,9 +10,6 @@
 		D80BC9C92E5CF009007D5BC8 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = D80BC9C82E5CF009007D5BC8 /* Atlantis */; };
 		D88C48F62E6470BB0080A5BA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D88C48F52E6470BB0080A5BA /* FirebaseAnalytics */; };
 		D88C48F82E6470BB0080A5BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D88C48F72E6470BB0080A5BA /* FirebaseMessaging */; };
-		D8A2EB482E781C24003A4C1E /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A2EB472E781C24003A4C1E /* MessageListView.swift */; };
-		D8A2EB4F2E788073003A4C1E /* img.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D8A2EB4D2E788073003A4C1E /* img.jpg */; };
-		D8A2EB502E788073003A4C1E /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D8A2EB4E2E788073003A4C1E /* video.mp4 */; };
 		D8DD858C2E530D0B003BAA6F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D8DD858B2E530D0B003BAA6F /* Kingfisher */; };
 /* End PBXBuildFile section */
 
@@ -47,9 +44,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D8A2EB472E781C24003A4C1E /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
-		D8A2EB4D2E788073003A4C1E /* img.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img.jpg; sourceTree = "<group>"; };
-		D8A2EB4E2E788073003A4C1E /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video.mp4; sourceTree = "<group>"; };
 		D8B111AB2E4B263E009F6748 /* FitSocial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitSocial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8B111BA2E4B2640009F6748 /* FitSocialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8B111C42E4B2640009F6748 /* FitSocialUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitSocialUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +53,8 @@
 		D8B111FF2E4B76E9009F6748 /* Exceptions for "FitSocial" folder in "FitSocial" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Config/Debug.xcconfig,
+				Config/Release.xcconfig,
 				Info.plist,
 			);
 			target = D8B111AA2E4B263E009F6748 /* FitSocial */;
@@ -122,9 +118,6 @@
 				D8B111BD2E4B2640009F6748 /* FitSocialTests */,
 				D8B111C72E4B2640009F6748 /* FitSocialUITests */,
 				D8B111AC2E4B263E009F6748 /* Products */,
-				D8A2EB472E781C24003A4C1E /* MessageListView.swift */,
-				D8A2EB4E2E788073003A4C1E /* video.mp4 */,
-				D8A2EB4D2E788073003A4C1E /* img.jpg */,
 			);
 			sourceTree = "<group>";
 		};
@@ -268,8 +261,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8A2EB4F2E788073003A4C1E /* img.jpg in Resources */,
-				D8A2EB502E788073003A4C1E /* video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +285,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8A2EB482E781C24003A4C1E /* MessageListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

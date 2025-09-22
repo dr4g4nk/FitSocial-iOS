@@ -65,6 +65,13 @@ struct ConversationScreen: View {
                     )
                     .navigationTitle("Korisnici")
                     .navigationBarTitleDisplayMode(.large)
+                    .toolbar{
+                        ToolbarItem(placement: .cancellationAction){
+                            Button(role: .cancel, action: { isCreating = false }, label: {
+                                Image(systemName: "xmark.circle")
+                            })
+                        }
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.large)

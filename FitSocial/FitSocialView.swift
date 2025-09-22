@@ -28,7 +28,8 @@ struct FitSocialView: View {
     @State private var feedPath = NavigationPath()
     @State private var activityPath = NavigationPath()
     @State private var conversationPath = NavigationPath()
-    @State private var profilePath = NavigationPath()
+    
+    @State private var showSettings = false
 
     @State private var loginPath = NavigationPath()
 
@@ -253,7 +254,7 @@ struct FitSocialView: View {
             }
             .tag(NavTab.messages)
 
-            NavigationStack(path: $profilePath) {
+            NavigationStack {
                 ProfileScreen(
                     container: profileContainer,
                     onEditPost: { post in
@@ -264,14 +265,18 @@ struct FitSocialView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         Button {
-                            onLogout()
+                            showSettings = true
                         } label: {
                             Image(
                                 systemName:
-                                    "rectangle.portrait.and.arrow.right"
+                                    "ellipsis.circle"
                             )
                         }
                     }
+                }
+                .navigationDestination(isPresented: $showSettings){
+                    SettingsView(onLogout: onLogout)
+                        .navigationTitle("Podešavanja")
                 }
             }
             .tabItem {

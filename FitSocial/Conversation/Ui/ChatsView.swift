@@ -69,18 +69,23 @@ struct ChatsContentView: View {
     let loadMore: () -> Void
     let onRowTap: (Chat) -> Void
     let onDelete: (Chat) -> Void
-    
+
+    @State private var selectedChat: Chat?
+
     var body: some View {
         List {
             if items.isEmpty {
-                ContentUnavailableView("Nema poruka za prikaz", systemImage: "bubble.left.and.text.bubble.right.rtl")
+                ContentUnavailableView(
+                    "Nema poruka za prikaz",
+                    systemImage: "bubble.left.and.text.bubble.right.rtl"
+                )
             }
             ForEach(items) { chat in
                 ChatRowLink(chat: chat, onTap: onRowTap)
                     .listRowSeparator(.automatic)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
-                            onDelete(chat)
+                            selectedChat = chat
                         } label: {
                             Label("Obriši", systemImage: "trash")
                         }
@@ -98,6 +103,20 @@ struct ChatsContentView: View {
             }
         }
         .listStyle(.plain)
+        .alert(
+            "Obrisati ovu konverzaciju?",
+            isPresented: .constant(selectedChat != nil)
+        ) {
+            Button("Obriši", role: .destructive) {
+                if let chat = selectedChat {
+                    onDelete(chat)
+                }
+                selectedChat = nil
+            }
+            Button("Odustani", role: .cancel) { selectedChat = nil }
+        } message: {
+            Text("Ova radnja se ne može poništiti.")
+        }
     }
 }
 
