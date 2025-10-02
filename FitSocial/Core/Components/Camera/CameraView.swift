@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CameraView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var vm = CameraViewModel()
+    @State private var model = CameraModel()
 
     @State private var showPreview = false
 
@@ -29,179 +29,262 @@ struct CameraView: View {
         NavigationStack {
             ZStack {
                 Color.black.opacity(0.8).ignoresSafeArea()
-
-                if vm.isConfigured {
-                    CameraPreviewView(session: vm.service.session)
-                        .ignoresSafeArea()
-                }
+                PreviewView()
+                    .onAppear {
+                        model.onSetPreviewPause(false)
+                    }
+                    .onDisappear {
+                        model.onSetPreviewPause(true)
+                    }
 
                 // Top bar
                 VStack {
-                    HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.white)
-                                .font(.system(size: 28, weight: .semibold))
-                                .padding(8)
-                        }
-                        .tint(.white)
-                        Spacer()
-                        Button {
-                            vm.toggleTorch()
-                        } label: {
-                            Image(
-                                systemName: vm.torchOn
-                                    ? "bolt.fill" : "bolt.slash.fill"
-                            )
-                            .foregroundColor(.white)
-                            .font(.system(size: 22, weight: .semibold))
-                            .padding(8)
-                        }
-                        .tint(.white)
+                    CameraTopBar(torch: model.torch) {
+                        model.toggleTorch()
+                    } onDismiss: {
+                        dismiss()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
 
                     Spacer()
 
                     // Bottom controls
-                    VStack(spacing: 16) {
-                        // Mode switch
-                        HStack(spacing: 12) {
-                            ModeButton(title: "Foto", active: vm.mode == .photo)
-                            { vm.setMode(.photo) }
-                            ModeButton(
-                                title: "Video",
-                                active: vm.mode == .video
-                            ) { vm.setMode(.video) }
-                            Spacer()
-                            Button {
-                                vm.toggleCamera()
-                            } label: {
-                                Image(
-                                    systemName:
-                                        "arrow.triangle.2.circlepath.camera"
-                                )
-                                .font(.system(size: 22, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(10)
-                                .background(.thinMaterial, in: Circle())
-                            }
-                            .tint(.white)
-                        }
-                        .padding(.horizontal, 16)
-
-                        Button {
-                            switch vm.mode {
-                            case .photo:
-                                vm.takePhoto()
-                            case .video:
-                                vm.toggleRecord()
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(.white.opacity(0.15))
-                                    .frame(width: 84, height: 84)
-                                Circle()
-                                    .fill(
-                                        vm.mode == .video && vm.isRecording
-                                            ? .red : .white
-                                    )
-                                    .frame(width: 64, height: 64)
-                                    .overlay {
-                                        if vm.mode == .video && vm.isRecording {
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .fill(.red)
-                                                .frame(width: 28, height: 28)
-                                        }
-                                    }
-                            }
-                        }
-                        .disabled(
-                            !(vm.mode == .photo
-                                ? vm.isReadyForPhoto : vm.isReadyForVideo)
-                        )
-                        .padding(.bottom, 24)
-
-                        if !(vm.mode == .photo
-                            ? vm.isReadyForPhoto : vm.isReadyForVideo)
-                        {
-                            ProgressView()
-                                .padding()
-                                .background(.ultraThinMaterial, in: Capsule())
-                        }
-                    }
+                    CameraControls(
+                        cameraMode: model.cameraMode,
+                        isRecording: model.isRecording,
+                        onCameraModeChange: { mode in model.cameraMode = mode },
+                        onSwitchCaptureDevice: model.onSwitchCaptureDevice,
+                        onTakePhoto: model.onTakePhoto,
+                        onToggleRecordVideo: model.onToggleRecordVideo
+                    )
                     .padding(.bottom, 24)
                 }
                 .foregroundStyle(.secondary)
             }
             .preferredColorScheme(.dark)
-            .onAppear {
-                vm.setup()
+            .task {
+                await model.onStart()
             }
-            .onDisappear { vm.stop() }
+            .onDisappear {
+                model.onStop()
+            }
             .alert(
                 "Kamera",
-                isPresented: .constant(vm.lastError != nil),
+                isPresented: .constant(model.lastError != nil),
                 actions: {
-                    Button("U redu") { vm.lastError = nil }
+                    Button("U redu") { model.lastError = nil }
                 },
-                message: { Text(vm.lastError ?? "") }
+                message: { Text(model.lastError ?? "") }
             )
             .alert(
                 "Pristup odbijen",
-                isPresented: $vm.showPermissionAlert,
+                isPresented: $model.showSettingsDialog,
                 actions: {
                     SettingsButton {
-                        vm.showPermissionAlert = false
+                        model.showSettingsDialog = false
+                        model.photosAlert = false
                     }
                     Button("Kasnije") {
-                        if !vm.photosAlert{
+                        if !model.photosAlert {
                             dismiss()
                         }
-                        vm.showPermissionAlert = false
+                        model.photosAlert = false
+                        model.showSettingsDialog = false
                     }
                 },
-                message: { Text(vm.unauthorizeMesssage ?? "") }
+                message: { Text(model.unauthorizeMesssage ?? "") }
             )
-            .navigationDestination(isPresented: $vm.showMediaPreview) {
-                if let url = vm.url {
-                    MediaPreviewView(mediaURL: url, isVideo: vm.isVideo)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button(
-                                    action: {
-                                        vm.saveToPhotos()
-                                    }
-                                ) {
-                                    Image(systemName: "square.and.arrow.down")
-                                }
-                                .disabled(vm.isSaving)
-                            }
-                            ToolbarItem(placement: .navigationBarTrailing) {
+            .alert(
+                "Pristup odbijen",
+                isPresented: $model.showRestrictedDialog,
+                actions: {
+                    Button("OK") {
+                        if !model.photosAlert {
+                            dismiss()
+                        }
+                        model.photosAlert = false
+                        model.showRestrictedDialog = false
+                    }
+                },
+                message: { Text(model.unauthorizeMesssage ?? "") }
+            )
+            .navigationDestination(item: $model.photoUrl) { url in
+                MediaView(
+                    url: url,
+                    isVideo: false,
+                    onNext: {
+                        onPhoto(url)
+                        dismiss()
+                    },
+                    onSave: {
+                        model.saveToPhotos()
+                    }
+                )
+            }
+            .navigationDestination(item: $model.movieUrl) { url in
+                MediaView(
+                    url: url,
+                    isVideo: true,
+                    onNext: {
+                        onPhoto(url)
+                        dismiss()
+                    },
+                    onSave: {
+                        model.saveToPhotos(isVideo: true)
+                    }
+                )
+            }
+            .alert(isPresented: $model.showSavedAlert) {
+                Alert(
+                    title: Text("Status"),
+                    message: Text(model.savedAlertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        }
+        .environment(model)
+    }
+}
 
-                                Button(
-                                    action: {
-                                        vm.isVideo ? onVideo(url) : onPhoto(url)
-                                        dismiss()
-                                    }
-                                ) {
-                                    Text("Nastavi")
-                                }
+private struct MediaView: View {
+    let url: URL
+    let isVideo: Bool
+    let onNext: () -> Void
+    let onSave: () -> Void
+
+    var body: some View {
+        MediaPreviewView(mediaURL: url, isVideo: isVideo)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(
+                        action: onSave
+                    ) {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+
+                    Button(
+                        action: {
+                            onNext()
+                        }
+                    ) {
+                        Text("Nastavi")
+                    }
+                }
+            }
+    }
+}
+
+private struct CameraTopBar: View {
+    let torch: AVCaptureDevice.TorchMode
+    let onToggleTorch: () -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HStack {
+            Button {
+                onDismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: 28, weight: .semibold))
+                    .padding(8)
+            }
+            .tint(.white)
+            Spacer()
+            Button {
+                onToggleTorch()
+            } label: {
+                Image(
+                    systemName: {
+                        switch torch {
+                        case .off:
+                            return "bolt.slash.fill"
+                        case .on:
+                            return "bolt.fill"
+                        default:
+                            return "bolt.badge.automatic.fill"
+                        }
+                    }()
+                )
+                .foregroundColor(.white)
+                .font(.system(size: 22, weight: .semibold))
+                .padding(8)
+            }
+            .tint(.white)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+}
+
+private struct CameraControls: View {
+    let cameraMode: CameraMode
+    let isRecording: Bool
+    let onCameraModeChange: (CameraMode) -> Void
+    let onSwitchCaptureDevice: () -> Void
+    let onTakePhoto: () -> Void
+    let onToggleRecordVideo: () -> Void
+    var body: some View {
+        VStack(spacing: 16) {
+            // Mode switch
+            HStack(spacing: 12) {
+                ModeButton(
+                    title: "Foto",
+                    active: cameraMode == .photo
+                ) { onCameraModeChange(.photo) }
+                ModeButton(
+                    title: "Video",
+                    active: cameraMode == .video
+                ) { onCameraModeChange(.video) }
+                Spacer()
+                Button {
+                    onSwitchCaptureDevice()
+                } label: {
+                    Image(
+                        systemName:
+                            "arrow.triangle.2.circlepath.camera"
+                    )
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(.thinMaterial, in: Circle())
+                }
+                .tint(.white)
+            }
+            .padding(.horizontal, 16)
+
+            Button {
+                switch cameraMode {
+                case .photo:
+                    onTakePhoto()
+                case .video:
+                    onToggleRecordVideo()
+                }
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.white.opacity(0.15))
+                        .frame(width: 84, height: 84)
+                    Circle()
+                        .fill(
+                            cameraMode == .video
+                                && isRecording
+                                ? .red : .white
+                        )
+                        .frame(width: 64, height: 64)
+                        .overlay {
+                            if cameraMode == .video
+                                && isRecording
+                            {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(.red)
+                                    .frame(width: 28, height: 28)
                             }
                         }
                 }
             }
-            .alert(isPresented: $vm.showSavedAlert) {
-                Alert(
-                    title: Text("Status"),
-                    message: Text(vm.savedAlertMessage),
-                    dismissButton: .default(Text("OK"))
-                )
-            }
+            .padding(.bottom, 24)
         }
     }
 }

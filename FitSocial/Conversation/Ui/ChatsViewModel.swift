@@ -27,14 +27,14 @@ final class ChatsViewModel {
 
     init(repo: any ChatRepository) {
         self.repo = repo
-        
-        Task{
-            do{
-                let data = try await repo.getLocalLatest(size: size)
+
+        Task {
+            do {
+                let data = try await self.repo.getLocalLatest(size: size)
                 if items.isEmpty {
                     items = data
                 }
-            } catch{
+            } catch {
                 print(error.localizedDescription)
             }
         }
@@ -42,13 +42,8 @@ final class ChatsViewModel {
 
     private var loadTask: Task<Void, Never>? = nil
 
-    func loadInitial() {
-        guard items.isEmpty else { return }
-        refresh()
-    }
-
     private var page: Int = 0
-    private var size: Int = 30
+    private var size: Int = 20
     private var sort: String? = "lastMessageTime,Desc"
 
     private var lastAction: Action?
@@ -63,14 +58,17 @@ final class ChatsViewModel {
     }
 
     private func checkReachedEnd(count: Int) {
-        if count < size { reachedEnd = true }
+        if count < size && !reachedEnd { reachedEnd = true }
+        else if reachedEnd { reachedEnd = false }
     }
 
     private func loadNextPage(onDataLoaded: @escaping ([Chat]) -> Void) {
         if fetchTask != nil { return }
         fetchTask = Task {
-            guard !reachedEnd else { return }
-            guard !isLoading else { return }
+            guard !reachedEnd || !isLoading else {
+                fetchTask = nil
+                return
+            }
             isLoading = true
             defer {
                 isLoading = false

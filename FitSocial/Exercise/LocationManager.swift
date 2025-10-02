@@ -24,6 +24,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     var selectedActivity: ActivityType = .walking
     
+    var showNeedAlwaysButton = true
+    
     var updateTick: Int = 0
 
     private(set) var exerciseDataAvailable = false
@@ -50,12 +52,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
 
     func requestLocationPermission() {
-        switch authorizationStatus {
+        switch manager.authorizationStatus {
         case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse:
-            // For background tracking, we need "Always" permission
-            needsAlwaysPermission = true
             manager.requestAlwaysAuthorization()
         default:
             break
@@ -63,10 +61,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
 
     func startTracking(for activitiType: ActivityType) {
-        guard authorizationStatus == .authorizedAlways else {
-            if authorizationStatus == .authorizedWhenInUse {
-                needsAlwaysPermission = true
-            }
+        guard authorizationStatus == .authorizedAlways || authorizationStatus == .authorizedWhenInUse else {
             return
         }
         exerciseDataAvailable = false
@@ -83,17 +78,11 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         manager.allowsBackgroundLocationUpdates = true
         manager.showsBackgroundLocationIndicator = true
 
-        // Start background task
-        startBackgroundTask()
-
         // Start location updates
         manager.startUpdatingLocation()
 
         // Save session
         saveSession()
-
-        // Schedule local notification for when app is backgrounded
-        scheduleBackgroundNotification()
     }
 
     private var data: Exercise?
@@ -109,9 +98,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         // Disable background location updates
         manager.allowsBackgroundLocationUpdates = false
         manager.stopUpdatingLocation()
-
-        // End background task
-        endBackgroundTask()
 
         let data = Exercise(
             type: "",
@@ -132,37 +118,15 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         // Clear saved session
         clearSession()
 
-        // Cancel background notifications
-        UNUserNotificationCenter.current()
-            .removeAllPendingNotificationRequests()
     }
 
     func pauseTracking() {
         manager.stopUpdatingLocation()
-        endBackgroundTask()
     }
 
     func resumeTracking() {
         guard isTracking else { return }
-        startBackgroundTask()
         manager.startUpdatingLocation()
-    }
-
-    private func startBackgroundTask() {
-        endBackgroundTask()  // End any existing task
-
-        backgroundTaskID = UIApplication.shared.beginBackgroundTask(
-            withName: "LocationTracking"
-        ) { [weak self] in
-            self?.endBackgroundTask()
-        }
-    }
-
-    private func endBackgroundTask() {
-        if backgroundTaskID != .invalid {
-            UIApplication.shared.endBackgroundTask(backgroundTaskID)
-            backgroundTaskID = .invalid
-        }
     }
 
     private func saveSession() {
@@ -293,7 +257,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
                 stopTracking()
             }
         default:
-            break
+            showNeedAlwaysButton = true
         }
     }
 

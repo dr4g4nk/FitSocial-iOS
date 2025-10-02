@@ -16,6 +16,7 @@ struct CommentInputBar: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             TextField("Napiši komentar…", text: $text, axis: .vertical)
+                .foregroundStyle(.primary)
                 .padding()
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -49,6 +50,6 @@ struct CommentInputBar: View {
         .padding(.horizontal)
         .padding(.top, 8)
         .padding(.bottom, 12)
-        .background(.thinMaterial)
+        .background(.thickMaterial)
     }
 }

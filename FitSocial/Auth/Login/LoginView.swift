@@ -125,7 +125,7 @@ struct LoginView: View {
                             .imageScale(.medium)
                         Text(error)
                     }
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color(.systemRed))
                     .font(.footnote)
                     .accessibilityHint("Došlo je do greške prilikom prijave")
                     .transition(.opacity)

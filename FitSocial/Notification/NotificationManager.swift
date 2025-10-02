@@ -21,23 +21,20 @@ public class NotificationManager{
     }
 
     public func setupNotificationCategories() {
+        
+        let replyActionIcon = UNNotificationActionIcon(systemImageName: "paperplane.fill")
         let reply = UNTextInputNotificationAction(
             identifier: "reply_action",
             title: "Odgovori",
             options: [.authenticationRequired],
+            icon: replyActionIcon,
             textInputButtonTitle: "Pošalji",
             textInputPlaceholder: "Napiši poruku…"
         )
 
-        let open = UNNotificationAction(
-            identifier: "open_chat",
-            title: "Otvori chat",
-            options: [.foreground]
-        )
-
         let chatCategory = UNNotificationCategory(
             identifier: "chat_messages",
-            actions: [reply, open],
+            actions: [reply],
             intentIdentifiers: [],
             options: [.customDismissAction]
         )

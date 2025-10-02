@@ -137,7 +137,6 @@ class FitSocialAppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate,
                 let textResponse = response as? UNTextInputNotificationResponse
             {
                 let replyText = textResponse.userText
-
                 if let chatIdString = userInfo["chatId"] as? String,
                     let chatId = Int(chatIdString)
                 {
@@ -168,7 +167,6 @@ class FitSocialAppDelegate: NSObject, UIApplicationDelegate, MessagingDelegate,
                 userInfo: nil
             )
         }
-
         completionHandler()
 
     }

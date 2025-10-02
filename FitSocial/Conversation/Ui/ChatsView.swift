@@ -58,7 +58,7 @@ struct ChatsView: View {
         .onChange(of: vm.searchText) { _, new in
             vm.onSearchTextChanged(new)
         }
-        .onAppear(perform: { vm.loadInitial() })
+        .onAppear(perform: { vm.refresh() })
     }
 }
 

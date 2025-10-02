@@ -199,7 +199,7 @@ struct RegistrationView: View {
                         )
                         Text("Nalog je uspješno kreiran.")
                     }
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color(.systemGreen))
                     .transition(.opacity)
                 }
             }
@@ -251,7 +251,7 @@ private struct LabeledField<Content: View>: View {
                     // Subtilan fokus/greška indikator (HIG: nenametljivo)
                     if error != nil {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(.red.opacity(0.6), lineWidth: 1)
+                            .stroke(Color(.systemRed).opacity(0.6), lineWidth: 1)
                     }
                 }
 
@@ -264,7 +264,7 @@ private struct LabeledField<Content: View>: View {
             if let error {
                 Text(error)
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color(.systemRed))
                     .transition(.opacity)
                     .accessibilityHint(error)
             }

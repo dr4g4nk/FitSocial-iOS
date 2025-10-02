@@ -41,6 +41,8 @@
 	<array>
 		<string>_Proxyman._tcp</string>
 	</array>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Notifikacije vam omogućavaju da budete u toku sa novim porukama, terminima i važnim događajima u realnom vremenu.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

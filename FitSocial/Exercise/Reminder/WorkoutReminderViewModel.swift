@@ -68,6 +68,7 @@ class WorkoutReminderViewModel {
             content.title = "Vreme za vežbanje!"
             content.body = "\(self.workoutTitle) - \(self.workoutType)"
             content.sound = UNNotificationSound.default
+            content.interruptionLevel = .timeSensitive
             content.categoryIdentifier = "exercise_reminder"
 
             let trigger = UNCalendarNotificationTrigger(

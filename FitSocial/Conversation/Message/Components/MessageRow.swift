@@ -93,7 +93,7 @@ struct MessageRow: View {
                     case "failed":
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.octagon.fill")
-                                .foregroundStyle(.red)
+                                .foregroundStyle(Color(.systemRed))
                             Text(message.error ?? "Greška pri slanju").font(
                                 .caption2
                             )

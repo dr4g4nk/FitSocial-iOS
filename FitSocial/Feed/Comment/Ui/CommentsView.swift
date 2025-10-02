@@ -10,7 +10,8 @@ import SwiftUI
 struct CommentsView: View {
     @Bindable private var vm: CommentsViewModel
     @State private var draft = ""
-
+    
+    @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var auth: AuthManager
     @FocusState private var isInputFocused: Bool
 
@@ -29,10 +30,24 @@ struct CommentsView: View {
             .padding(.top, 8)
             .padding(.bottom, 4)
 
-            Text("Komentari")
-                .font(.headline)
-                .padding(.vertical, 6)
-
+            HStack{
+                Spacer()
+                Text("Komentari")
+                    .font(.headline)
+                    .padding(.vertical, 6)
+                Spacer()
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.primary)
+                        .font(.system(size: 16))
+                        .background(Circle().fill(.thickMaterial).frame(width: 40, height: 40))
+                }
+                
+            }
+            .padding(.horizontal, 16)
+            
             Divider()
 
             List {
@@ -41,6 +56,9 @@ struct CommentsView: View {
                         .onAppear {
                             Task { await vm.loadNextPageIfNeeded(current: c) }
                         }
+                }
+                if vm.comments.isEmpty {
+                    ContentUnavailableView("Još nema komentara na ovoj obravi. Budite prvi, ostavite komentar", systemImage: "text.bubble")
                 }
                 if vm.isLoading && vm.comments.isEmpty {
                     Section { ProgressView().frame(maxWidth: .infinity) }
@@ -88,7 +106,7 @@ struct CommentsView: View {
                     Button("Zatvori tastaturu") { isInputFocused = false }                }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
-                .background(.thinMaterial) // ili .ultraThinMaterial
+                .background(.thinMaterial)
             }
         }
     }

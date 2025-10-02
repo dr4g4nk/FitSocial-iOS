@@ -20,6 +20,8 @@ struct ActivitySelectionView: View {
 
     @State var hasActiveSession = false
     @State var selectedActivity: ActivityType = .walking
+    
+    @State private var currentActivity: ActivityType?
     @State var showingTrackingView = false
     @State var startNewSession = true
 
@@ -84,7 +86,7 @@ struct ActivitySelectionView: View {
 
                                     Text("Aktivna sesija u toku")
                                         .font(.headline)
-                                        .foregroundColor(.green)
+                                        .foregroundColor(Color(.systemGreen))
 
                                     Spacer()
                                 }
@@ -132,7 +134,7 @@ struct ActivitySelectionView: View {
             .navigationDestination(isPresented: $showingTrackingView) {
                 LiveTrackingView(
                     container: container,
-                    selectedActivity: selectedActivity,
+                    selectedActivity: startNewSession ? selectedActivity : (currentActivity ?? selectedActivity),
                     startNewSession: startNewSession,
                     onDismiss: { showingTrackingView = false }
                 )
@@ -143,6 +145,7 @@ struct ActivitySelectionView: View {
                 forKey: "TrackingSession"
             )
             hasActiveSession = sessionData?["isTracking"] as? Bool ?? false
+            currentActivity = .init(rawValue: sessionData?["type"] as? String ?? "")
         }
         .toolbar(!showingTrackingView ? .visible : .hidden, for: .tabBar)
     }

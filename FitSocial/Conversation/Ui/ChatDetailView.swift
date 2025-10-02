@@ -92,7 +92,15 @@ struct ChatDetailView: View {
                 vm.onSelectFilesFailure(failure: failure)
             }
         }
-        .navigationTitle(vm.chat.display)
+        .toolbar{
+            ToolbarItem(placement: .principal){
+                HStack{
+                    GroupAvatar(users: vm.chat.users, size: 40)
+                        .accessibilityHidden(true)
+                    Text(vm.chat.display).font(.headline)
+                }
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
     }
 }

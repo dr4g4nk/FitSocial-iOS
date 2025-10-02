@@ -145,7 +145,7 @@ struct ReminderRowView: View {
                         .font(.headline)
                     Text(reminder.workoutType)
                         .font(.subheadline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color(.systemBlue))
                 }
 
                 Spacer()
@@ -155,18 +155,18 @@ struct ReminderRowView: View {
                         .font(.caption)
                     Text(reminder.scheduledDate, style: .time)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.systemGray))
                 }
             }
 
             if reminder.scheduledDate > Date() {
                 Label("Aktivan", systemImage: "clock")
                     .font(.caption)
-                    .foregroundColor(.green)
+                    .foregroundColor(Color(.systemGreen))
             } else {
                 Label("Istekao", systemImage: "clock.badge.xmark")
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color(.systemRed))
             }
         }
         .padding(.vertical, 5)

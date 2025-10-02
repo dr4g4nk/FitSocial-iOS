@@ -235,11 +235,13 @@ struct FitSocialView: View {
                                     conversationPath.append(chat)
                                     isCreating = false
                                 }
-                            }
+                            },
+                            onCancel: { isCreating = false }
                         )
                         .navigationTitle("Korisnici")
                         .navigationBarTitleDisplayMode(.large)
                     }
+                    .presentationDetents([.large])
                 }
                 .navigationBarTitleDisplayMode(.large)
             }.toolbar(

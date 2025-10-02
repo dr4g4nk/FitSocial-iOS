@@ -17,8 +17,8 @@ struct ExerciseRowView: View {
                 systemName: exercise.activityType?.icon ?? "figure.mixed.cardio"
             )
             .frame(width: 50, height: 50)
-            .background((exercise.activityType?.color ?? .orange).opacity(0.1))
-            .foregroundColor(exercise.activityType?.color ?? .orange)
+            .background((exercise.activityType?.color ?? Color(.systemOrange)).opacity(0.1))
+            .foregroundColor(exercise.activityType?.color ?? Color(.systemOrange))
             .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 4) {

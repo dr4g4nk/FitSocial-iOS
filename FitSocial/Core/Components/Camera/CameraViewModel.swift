@@ -9,7 +9,6 @@ import AVFoundation
 import Photos
 import SwiftUI
 
-enum CameraMode { case photo, video }
 
 @MainActor
 @Observable

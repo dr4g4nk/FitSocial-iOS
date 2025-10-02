@@ -11,10 +11,12 @@ struct ChatUserListView: View {
     @Bindable private var vm: ChatUserListViewModel
 
     private let onNext: ([User]) -> Void
+    private let onCancel: () -> Void
 
-    init(vm: ChatUserListViewModel, onNext: @escaping ([User]) -> Void) {
+    init(vm: ChatUserListViewModel, onNext: @escaping ([User]) -> Void, onCancel: @escaping () -> Void) {
         self.vm = vm
         self.onNext = onNext
+        self.onCancel = onCancel
     }
 
     var body: some View {
@@ -116,6 +118,15 @@ struct ChatUserListView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Dalje") { onNext(vm.selectedUsers) }
                     .disabled(vm.selectedUsers.isEmpty)  // aktivno tek kad postoji selekcija
+            }
+            ToolbarItem(placement: .cancellationAction) {
+                Button(
+                    role: .cancel,
+                    action: onCancel,
+                    label: {
+                        Image(systemName: "xmark.circle")
+                    }
+                )
             }
         }
     }

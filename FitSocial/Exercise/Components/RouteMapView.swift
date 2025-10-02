@@ -20,7 +20,7 @@ struct RouteMapView: View {
     var body: some View {
         Map(position: $camera, interactionModes: .all) {
             MapPolyline(coordinates: coordinates)
-                .stroke(.blue, lineWidth: 4)
+                .stroke(Color(.systemBlue), lineWidth: 4)
             if isTracking {
                 UserAnnotation()
             } else {
@@ -35,7 +35,7 @@ struct RouteMapView: View {
                 if let last = coordinates.last {
                     Annotation("", coordinate: last) {
                         Image(systemName: "flag.circle.fill")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color(.systemRed))
                             .font(.title)
                             .shadow(radius: 3)
                     }

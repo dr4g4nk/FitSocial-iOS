@@ -135,7 +135,7 @@ struct PostActionsView: View {
                 onLikeToggle()
             } label: {
                 Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .foregroundColor(isLiked ? .red : .primary)
+                    .foregroundColor(isLiked ? Color(.systemRed) : .primary)
                     .imageScale(.large)
             }
             .accessibilityLabel(isLiked ? "Liked" : "Like")

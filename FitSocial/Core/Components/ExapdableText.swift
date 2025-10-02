@@ -57,7 +57,7 @@ struct ExpandableText: View {
                 }) {
                     Text(expanded ? "Prikaži manje" : "Prikaži više")
                         .font(.caption)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color(.systemBlue))
                 }
                 .buttonStyle(.plain)
             }

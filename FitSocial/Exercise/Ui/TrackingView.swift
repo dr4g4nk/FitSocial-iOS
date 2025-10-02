@@ -44,9 +44,19 @@ struct LiveTrackingView: View {
         self.startNewSession = startNewSession
         self.onDismiss = onDismiss
         self.showingPermissionView = showingPermissionView
+        
     }
     @State private var showingPermissionView = false
 
+    private func onPermissionGranted(){
+        showingPermissionView = false
+        // Počni praćenje nakon što su dozvole odobrene
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            locationManager.startTracking(for: vm.selectedActivity)
+            showingPermissionView = false
+        }
+    }
+    
     var body: some View {
         VStack {
             if showingPermissionView {
@@ -54,14 +64,7 @@ struct LiveTrackingView: View {
                     locationManager: locationManager,
                     healtStoreManager: vm.stepCounterManager,
                     selectedActivity: vm.selectedActivity,
-                    onPermissionsGranted: {
-                        showingPermissionView = false
-                        // Počni praćenje nakon što su dozvole odobrene
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            locationManager.startTracking(for: vm.selectedActivity)
-                            showingPermissionView = false
-                        }
-                    },
+                    onPermissionsGranted: onPermissionGranted,
                     onDismiss: onDismiss
                 )
             } else {
@@ -334,7 +337,7 @@ struct PermissionFlowView: View {
                             title: "Pristup lokaciji",
                             description:
                                 "Potreban je pristup vašoj lokaciji da bismo mogli pratiti vašu aktivnost.",
-                            buttonText: "Dozvoli pristup",
+                            buttonText: "Zatraži pristup",
                             buttonColor: selectedActivity.color,
                             backgroundColor: .white.opacity(0.2),
                             stepNumber: 1,
@@ -349,16 +352,18 @@ struct PermissionFlowView: View {
                             // Step 2: Always Permission
                             PermissionStepCard(
                                 icon: "location.fill.viewfinder",
-                                title: "Praćenje u pozadini",
+                                title: "Omogući pozadinsko praćenje",
                                 description:
-                                    "Da bi praćenje radilo i kada zatvorite aplikaciju, izaberite 'Uvek' u sledećem dijalogu.",
-                                buttonText: "Omogući pozadinsko praćenje",
+                                    "Za najbolje iskustvo, u Podešavanjima dozvola dozvolite aplikaciji da 'Uvijek' koristi aplikaciju da bi praćenje radilo i kada zatvorite aplikaciju.",
+                                buttonText: "Otvori Podešavanja",
                                 buttonColor: selectedActivity.color,
-                                backgroundColor: .white.opacity(0.2),
-                                stepNumber: 2,
-                                totalSteps: totalSteps
+                                backgroundColor: .white.opacity(0.2)
                             ) {
-                                locationManager.requestLocationPermission()
+                                if let settingsUrl = URL(
+                                    string: UIApplication.openSettingsURLString
+                                ) {
+                                    UIApplication.shared.open(settingsUrl)
+                                }
                             }
                         }
                     } else if locationManager.authorizationStatus
@@ -367,14 +372,18 @@ struct PermissionFlowView: View {
                         // Samo Always Permission
                         PermissionStepCard(
                             icon: "location.fill.viewfinder",
-                            title: "Praćenje u pozadini",
+                            title: "Omogući pozadinsko praćenje",
                             description:
-                                "Za najbolje iskustvo, izaberite 'Uvek' da bi praćenje radilo i kada zatvorite aplikaciju.",
-                            buttonText: "Omogući pozadinsko praćenje",
+                                "Za najbolje iskustvo, u Podešavanjima dozvola dozvolite aplikaciji da 'Uvijek' koristi aplikaciju da bi praćenje radilo i kada zatvorite aplikaciju.",
+                            buttonText: "Otvori Podešavanja",
                             buttonColor: selectedActivity.color,
                             backgroundColor: .white.opacity(0.2)
                         ) {
-                            locationManager.requestLocationPermission()
+                            if let settingsUrl = URL(
+                                string: UIApplication.openSettingsURLString
+                            ) {
+                                UIApplication.shared.open(settingsUrl)
+                            }
                         }
                     }
                 }
