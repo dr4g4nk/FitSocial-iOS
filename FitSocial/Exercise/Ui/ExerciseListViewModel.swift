@@ -17,7 +17,7 @@ class ExerciseListViewModel {
     private let dataStore: ExerciseLocalStore
 
     init(modelContainer: ModelContainer) {
-        self.dataStore = ExerciseLocalStore(container: modelContainer)
+        self.dataStore = ExerciseLocalStore(modelContainer: modelContainer)
     }
 
     var isLoading = false

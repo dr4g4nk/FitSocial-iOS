@@ -7,12 +7,8 @@
 
 import SwiftData
 
+@ModelActor
 actor WorkoutReminderLocalStore: SwiftDataCRUDManager{
     typealias T = WorkoutReminderEntity
     
-    let modelContext: ModelContext
-    
-    init(container: ModelContainer){
-        self.modelContext = ModelContext(container)
-    }
 }

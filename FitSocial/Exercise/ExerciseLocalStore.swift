@@ -7,12 +7,8 @@
 
 import SwiftData
 
+@ModelActor
 actor ExerciseLocalStore: SwiftDataCRUDManager{
     typealias T = Exercise
-    
-   let modelContext: ModelContext
-    
-    init(container: ModelContainer){
-        self.modelContext = ModelContext(container)
-    }
+
 }

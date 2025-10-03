@@ -40,9 +40,9 @@ class MessageRepositoryImpl<Service: MessageApiService>: MessageRepository {
 
     init(apiService: Service, modelContainer: ModelContainer) {
         self.apiService = apiService
-        self.messagelocalStore = MessageLocalStore(container: modelContainer)
+        self.messagelocalStore = MessageLocalStore(modelContainer: modelContainer)
         self.attachemntLocalStore = AttachmentLocalStore(
-            container: modelContainer
+            modelContainer: modelContainer
         )
     }
 

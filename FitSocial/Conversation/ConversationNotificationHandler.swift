@@ -20,8 +20,8 @@ public class ConversationNotificationHandler {
 
     init(modelContainer: ModelContainer, decoder: JSONDecoder) {
         self.context = ModelContext(modelContainer)
-        self.chatLocalStore = ChatLocalStore(container: modelContainer)
-        self.messageLocalStore = MessageLocalStore(container: modelContainer)
+        self.chatLocalStore = ChatLocalStore(modelContainer: modelContainer)
+        self.messageLocalStore = MessageLocalStore(modelContainer: modelContainer)
         self.decoder = decoder
     }
 

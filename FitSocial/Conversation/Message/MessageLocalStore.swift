@@ -8,14 +8,10 @@
 import Foundation
 import SwiftData
 
+@ModelActor
 actor MessageLocalStore: SwiftDataCRUDManager {
     typealias T = MessageEntity
-    
-    let modelContext: ModelContext
 
-    init(container: ModelContainer) {
-        self.modelContext = ModelContext(container)
-    }
 
     func _create(_ item: MessageEntity) throws {
         if let usr = item.user {

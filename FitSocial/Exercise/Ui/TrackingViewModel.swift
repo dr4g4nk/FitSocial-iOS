@@ -18,7 +18,7 @@ class TrackingViewModel{
     private(set) var stepCounterManager: StepCounterManager
     
     init(modelContainer: ModelContainer, selectedActivity: ActivityType){
-        exerciseLocalStore = ExerciseLocalStore(container: modelContainer)
+        exerciseLocalStore = ExerciseLocalStore(modelContainer: modelContainer)
         self.selectedActivity = selectedActivity
         stepCounterManager = StepCounterManager()
         

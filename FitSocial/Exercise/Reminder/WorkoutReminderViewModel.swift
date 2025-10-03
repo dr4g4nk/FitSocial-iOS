@@ -31,7 +31,7 @@ class WorkoutReminderViewModel {
 
     init(modelContainder: ModelContainer) {
         self.remindersStore = WorkoutReminderLocalStore(
-            container: modelContainder
+            modelContainer: modelContainder
         )
     }
 

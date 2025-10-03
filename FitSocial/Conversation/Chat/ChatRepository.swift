@@ -22,7 +22,7 @@ class ChatRepositoryImpl<Service: ChatApiService> : ChatRepository {
     
     init(apiService: Service, modelContainer: ModelContainer) {
         self.apiService = apiService
-        chatLocalStore = ChatLocalStore(container: modelContainer)
+        chatLocalStore = ChatLocalStore(modelContainer: modelContainer)
     }
     
     func getAllFiltered(page: Int?, size: Int?, sort: String?, filterValue: String?) async throws -> Page<Chat> {

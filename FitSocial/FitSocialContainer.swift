@@ -88,7 +88,7 @@ final class FitSocialContainer {
         FeedContainer(
             apiClient: apiClient,
             session: session,
-            modelContext: ModelContext(modelContainer)
+            modelContainer: modelContainer
         )
     }
 
@@ -96,7 +96,7 @@ final class FitSocialContainer {
         ProfileContainer(
             apiClient: apiClient,
             session: session,
-            modelContext: ModelContext(modelContainer)
+            modelContainer: modelContainer
         )
     }
 

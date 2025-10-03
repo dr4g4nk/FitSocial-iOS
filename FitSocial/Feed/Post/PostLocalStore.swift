@@ -8,30 +8,32 @@
 import Foundation
 import SwiftData
 
-@MainActor
-protocol PostLocalStore {
+
+protocol PostLocalStore: Actor {
     func latest(limit: Int, predicate: Predicate<PostEntity>?) async throws -> [Post]
     func upsert(posts: [Post]) async throws
 }
 
-@MainActor
-final class PostLocalStoreImpl: PostLocalStore {
-    private let context: ModelContext
-    private let session: UserSession
-    init(context: ModelContext, session: UserSession) {
-        self.context = context
+@ModelActor
+actor PostLocalStoreImpl: PostLocalStore {
+    private var session: UserSession?
+    
+    init(modelContainer: ModelContainer, session: UserSession) {
+        let modelContext = ModelContext(modelContainer)
+        self.modelExecutor = DefaultSerialModelExecutor(modelContext: modelContext)
+        self.modelContainer = modelContainer
         self.session = session
     }
 
     func latest(limit: Int, predicate: Predicate<PostEntity>? = nil) async throws -> [Post] {
-        let isLogedIn = try await session.isLoggedIn()
+        let isLogedIn = try await session?.isLoggedIn() ?? false
 
         var desc = FetchDescriptor<PostEntity>(
             predicate: predicate,
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
         desc.fetchLimit = limit
-        return try context.fetch(desc).map { p in
+        return try modelContext.fetch(desc).map { p in
             var user = User(
                 id: p.author.id,
                 firstName: p.author.firstName,
@@ -79,7 +81,7 @@ final class PostLocalStoreImpl: PostLocalStore {
     }
 
     func upsert(posts: [Post]) async throws {
-        let isLogedIn = try await session.isLoggedIn()
+        let isLogedIn = try await session?.isLoggedIn() ?? false
 
         for dto in posts {
             // User
@@ -140,9 +142,9 @@ final class PostLocalStoreImpl: PostLocalStore {
                 post.media.append(media)
             }
 
-            context.insert(post)
+            modelContext.insert(post)
         }
-        try context.save()
+        try modelContext.save()
     }
 
     // Helpers
@@ -154,7 +156,7 @@ final class PostLocalStoreImpl: PostLocalStore {
             predicate: #Predicate { $0.id == id }
         )
         d.fetchLimit = 1
-        return try context.fetch(d).first
+        return try modelContext.fetch(d).first
     }
 
     private func upsertUser(
@@ -175,7 +177,7 @@ final class PostLocalStoreImpl: PostLocalStore {
             lastName: last,
             avatarUrl: avatar ?? ""
         )
-        context.insert(u)
+        modelContext.insert(u)
         return u
     }
 
@@ -203,7 +205,7 @@ final class PostLocalStoreImpl: PostLocalStore {
             steps: steps,
             distance: distance
         )
-        context.insert(a)
+        modelContext.insert(a)
         return a
     }
 }

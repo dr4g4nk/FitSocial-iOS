@@ -7,15 +7,11 @@
 
 import SwiftData
 
+@ModelActor
 actor ChatLocalStore: SwiftDataCRUDManager {
     typealias T = ChatEntity
     
-    let modelContext: ModelContext
-
-    init(container: ModelContainer) {
-        self.modelContext = ModelContext(container)
-    }
-    
+   
      func _createBatch(_ items: [ChatEntity]) throws {
             for item in items {
                 item.users = try item.users.map({ u in

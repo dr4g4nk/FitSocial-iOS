@@ -12,7 +12,7 @@ import SwiftData
 @MainActor
 final class ProfileContainer {
     private let session: UserSession
-    private let modelContext: ModelContext
+    private let modelContainer: ModelContainer
     
     private let postApiService: any PostApiService
     private let postRepo: any PostRepository
@@ -21,13 +21,13 @@ final class ProfileContainer {
     private let commentRepo: any CommentRepository
     
 
-    init(apiClient: APIClient, session: UserSession, modelContext: ModelContext) {
+    init(apiClient: APIClient, session: UserSession, modelContainer: ModelContainer) {
         self.session = session
-        self.modelContext = modelContext
+        self.modelContainer = modelContainer
         let postApiService: PostApiServiceImpl = PostApiServiceImpl(api: apiClient, session: session)
         self.postApiService = postApiService
         
-        let localStore: PostLocalStore = PostLocalStoreImpl(context: modelContext, session: session)
+        let localStore: PostLocalStore = PostLocalStoreImpl(modelContainer: modelContainer, session: session)
 
         self.postRepo = PostRepositoryImpl(postApiService, sesson: session, localStore: localStore)
         

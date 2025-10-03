@@ -7,13 +7,8 @@
 
 import SwiftData
 
+@ModelActor
 actor AttachmentLocalStore: SwiftDataCRUDManager{
     typealias T = AttachmentEntity
     
-    let modelContext: ModelContext
-
-    init(container: ModelContainer) {
-        self.modelContext = ModelContext(container)
-    }
-
 }
