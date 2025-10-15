@@ -6,7 +6,6 @@
 //
 
 import Observation
-import SwiftUI
 
 @MainActor
 @Observable
@@ -58,8 +57,11 @@ final class ChatsViewModel {
     }
 
     private func checkReachedEnd(count: Int) {
-        if count < size && !reachedEnd { reachedEnd = true }
-        else if reachedEnd { reachedEnd = false }
+        if count < size && !reachedEnd {
+            reachedEnd = true
+        } else if reachedEnd {
+            reachedEnd = false
+        }
     }
 
     private func loadNextPage(onDataLoaded: @escaping ([Chat]) -> Void) {
@@ -171,6 +173,26 @@ final class ChatsViewModel {
             items.removeAll { c in
                 c.id == chat.id
             }
+        }
+    }
+
+    func onNewMessage(message: Message) {
+        let chat = items.first { c in
+            c.id == message.chatId
+        }
+        if let c = chat {
+            let newChat = Chat(
+                id: c.id,
+                subject: c.subject,
+                text: !message.content.isEmpty
+                    ? message.content : message.label,
+                lastMessageTime: message.createdAt,
+                users: c.users
+            )
+            items = items.filter { ch in
+                ch.id != newChat.id
+            }
+            items.insert(newChat, at: 0)
         }
     }
 }

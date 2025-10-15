@@ -97,6 +97,7 @@ struct FitSocialView: View {
     }
 
     private func onLogout() {
+        showSettings = false
         Task {
             await auth.logout()
             currentTab = .feed
@@ -200,6 +201,7 @@ struct FitSocialView: View {
                     onOpenChat: { chat in
                         container.contersationNotificationHandler.currentChatId = chat.id
                         chatDetailViewModel = conversationContainer.makeChatDetailViewModel(chat: chat)
+                        chatDetailViewModel?.onNewMessage = chatsViewModel.onNewMessage
                         conversationPath.append(chat)
                     }
                 )

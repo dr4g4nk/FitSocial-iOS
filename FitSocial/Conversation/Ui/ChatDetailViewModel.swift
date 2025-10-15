@@ -23,6 +23,8 @@ final class ChatDetailViewModel {
     private(set) var page: Int = 0
     private(set) var size: Int = 30
     private var sort: String? = "id,Desc"
+    
+    var onNewMessage: ((Message) -> Void)?
 
     private var noMoreData: Bool = false
 
@@ -186,6 +188,7 @@ final class ChatDetailViewModel {
                     try await repo.deleteLocal(m)
                     if let mess = message {
                         try await repo.createLocal(message: mess)
+                        onNewMessage?(mess)
                     }
                 } else {
                     let data = try await chatRepo.create(
